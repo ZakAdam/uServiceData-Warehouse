@@ -1,0 +1,7 @@
+## Repozitár k bakalárskemu projektu Adam Žák
+
+Modulárny e-commerce dátový sklad  využívajúci mikroslužby
+
+V dobe informačných technológií a veľkého objemu dát je jednou z kľúčových úloh tieto dáta spracovať a využiť čo najefektívnejšie. Oblasť e-commerce ponúka obrovské množstvo dát, ktorých zhromažďovanie a využitie môže výrazne prispieť k procesu tvorby kľúčových rozhodnutí. Okrem zhromažďovania aplikačných dát je zvyčajne potrebné zhromažďovať aj dáta z externých úložísk ako sú napríklad databázy, webové služby, e-mailové schránky alebo offline súbory. Rôzne dátové zdroje ukladajú dáta rôznymi spôsobmi, či už vo viacerých tabuľkách, json/xml dátach, excelových súboroch a podobne. Dátový sklad môže byť chápaný ako skupina transformácií týchto dát, ktoré ich agregujú do jednotnej dátovej štruktúry. Kľúčovými princípmi je použiteľnosť dát, rýchlosť spracovania a automatizácia riešenia pomocou naplánovaných programových sekvencií.
+
+Analyzujte rôzne platformy pre mikroslužby a návrh dátových skladov. Navrhnite prípadovú štúdiu, v ktorej porovnajte architektúru mikroservicov oproti monolitickej aplikácii. Vytvorte aplikáciu vo frameworku Ruby on Rails s databázovou štruktúrou, ktorá bude plniť funkciu dátového skladu. V rámci aplikácie vytvorte viacero medzi sebou komunikujúcich modulov a nasaďte ich na server s využitím kontajnerizácie. Experimentálne overte výhody a nevýhody Vami navrhnutého riešenia.
