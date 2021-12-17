@@ -1,0 +1,4 @@
+= form_with(url: {action: :create}, multipart: true) do |form|
+    = file_field_tag 'file'
+    = form.select :file_type, ['GLS', 'DHL']
+    = submit_tag("Upload")

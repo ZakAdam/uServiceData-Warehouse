@@ -1,0 +1,6 @@
+- flash.each do |type, msg|
+  %div
+    = msg
+    
+%h1= 'Rarity of names from customers'
+= pie_chart(@data)

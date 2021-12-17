@@ -1,0 +1,8 @@
+%h1= 'Food stats'
+%h2= 'Rarity of food names'
+= line_chart(@data)
+= column_chart(@data)
+
+%h2= 'Rarity of food prices'
+= area_chart(@price)
+= bar_chart(@price)

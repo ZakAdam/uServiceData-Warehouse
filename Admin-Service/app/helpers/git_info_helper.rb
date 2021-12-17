@@ -1,0 +1,2 @@
+module GitInfoHelper
+end
