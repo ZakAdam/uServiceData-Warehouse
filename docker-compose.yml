@@ -1,11 +1,17 @@
 version: '3.0'
 services:
-  admin_service:
-    build: Admin-Service/.
-    ports:
-      - "4000:3000"
+  #admin_service:
+  #  build: Admin-Service/.
+  #  ports:
+  #    - "4000:3000"
+  #   problem s databazou :(
 
   dispatcher:
     build: dispatcher/.
     ports:
       - "4001:3000"
+
+  invoices:
+    build: invoices/.
+    ports:
+      - "4002:3000"
