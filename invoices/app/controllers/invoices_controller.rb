@@ -3,11 +3,10 @@ class InvoicesController < ApplicationController
 
   def new
     puts "\n\nSOM v invoices controllery\n\n"
-    sleep(20)
     if params[:file_type] == "GLS"
-      puts params
-
-      puts params[:file].read
+      result = RestClient.post "http://172.19.0.1:4003/gls_invoice", :file_type => params[:file_type], :file => params[:file]
+      #result = RestClient.post "http://gls_inovices:80/gls_invoice", :file_type => params[:file_type], :file => params[:file]
+      puts result
     end
 
     render json: { response: "\n\n\n\nWe have received your invoice :)\n\n\n\n" }

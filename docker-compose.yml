@@ -15,3 +15,8 @@ services:
     build: invoices/.
     ports:
       - "4002:3000"
+
+  gls_invoices:
+    build: gls_invoice/.
+    ports:
+      - "4003:3000"
