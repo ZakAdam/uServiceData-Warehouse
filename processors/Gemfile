@@ -5,8 +5,13 @@ ruby '3.0.1'
 
 gem 'sinatra'
 
-gem 'thin'
-gem 'puma'
-gem 'reel'
-gem 'http'
-gem 'webrick'
+#gem 'thin'
+#gem 'puma'
+#gem 'reel'
+#gem 'http'
+#gem 'webrick'
+
+gem 'smarter_csv'
+gem "roo", "~> 2.8.0"
+gem 'roo-xls'
+gem 'rest-client'
