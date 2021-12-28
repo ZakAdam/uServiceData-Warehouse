@@ -26,7 +26,9 @@ post '/gls_invoice/process' do
       carrier: 'gls',
       invoice_date: row['InvoiceDate'],
       delivery_date: row['DeliverDate'],
+      delivery_cash: row['Dobierka'],
       fees: row['TollFee'] + row['Diesel Fee'] + row['TransportFee'] + row['SVFee'] + row['CodFee'] + row['OverWeightFee'] + row['ExpressFee'] + row['CreditCardFee'] + row['ManualLabelFee'],
+      price: row['Cena'],
       country: row['Štát'],
       customer: get_customer_name(row['PostalAddr'].to_s),
       city: row['Mesto'],
@@ -36,12 +38,14 @@ post '/gls_invoice/process' do
     }
   end
 
-  puts transform[1]
+  #puts transform[1]
   #content_type :json
-  { first_zaznam: transform[1] }.to_json
+  #{ first_zaznam: transform[1] }.to_json
 
   result = RestClient.post "localhost:4000/transport_invoices/save", :file_type => params[:file_type], :file => transform
   puts result
+
+  transform[1].to_json
   #render json: { first_zaznam: transform[1] }
   #puts transform
 
