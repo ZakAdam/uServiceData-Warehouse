@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_28_104050) do
+ActiveRecord::Schema.define(version: 2021_12_28_110701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,10 +44,30 @@ ActiveRecord::Schema.define(version: 2021_12_28_104050) do
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
 
+  create_table "invoices", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "date_id"
+    t.bigint "carrier_id"
+    t.bigint "country_id"
+    t.decimal "price"
+    t.decimal "fees"
+    t.decimal "cash_on_delivery"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.index ["carrier_id"], name: "index_invoices_on_carrier_id"
+    t.index ["country_id"], name: "index_invoices_on_country_id"
+    t.index ["customer_id"], name: "index_invoices_on_customer_id"
+    t.index ["date_id"], name: "index_invoices_on_date_id"
+  end
+
   create_table "payment_methods", force: :cascade do |t|
     t.string "type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "invoices", "carriers"
+  add_foreign_key "invoices", "countries"
+  add_foreign_key "invoices", "customers"
+  add_foreign_key "invoices", "dates"
 end
