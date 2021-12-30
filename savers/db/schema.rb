@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_28_110701) do
+ActiveRecord::Schema.define(version: 2021_12_30_170954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,8 +66,33 @@ ActiveRecord::Schema.define(version: 2021_12_28_110701) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.decimal "price"
+    t.integer "rating"
+    t.string "ean"
+    t.string "product_number"
+    t.bigint "order_id"
+    t.bigint "review_id"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.index ["review_id"], name: "index_products_on_review_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer "rating"
+    t.text "summary"
+    t.datetime "converted_timestamp"
+    t.bigint "original_id"
+    t.string "unix_timestamp"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+  end
+
   add_foreign_key "invoices", "carriers"
   add_foreign_key "invoices", "countries"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "dates"
+  add_foreign_key "products", "reviews"
 end

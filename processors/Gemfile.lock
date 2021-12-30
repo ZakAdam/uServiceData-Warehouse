@@ -14,6 +14,7 @@ GEM
     netrc (0.11.0)
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
+    nori (2.6.0)
     racc (1.6.0)
     rack (2.2.3)
     rack-protection (2.1.0)
@@ -50,6 +51,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  nori
   rest-client
   roo (~> 2.8.0)
   roo-xls

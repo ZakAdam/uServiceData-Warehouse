@@ -3,4 +3,6 @@ Rails.application.routes.draw do
   post 'transport_invoices/save', to: 'transport_invoices#new_invoice'
   post 'package_tracking/save'
   post 'reviews/save'
+
+  post 'heureka_reviews/save', to: 'heureka_reviews#new_review'
 end
