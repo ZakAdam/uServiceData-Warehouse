@@ -4,6 +4,9 @@ require 'sinatra'
 require 'nokogiri'
 require 'nori'
 require 'rest-client'
+require 'dotenv'
+
+Dotenv.load
 
 get '/' do
   'Hello world!'
@@ -20,7 +23,7 @@ post '/heureka_reviews/process' do
   #  puts product['product_name']
   #end
 
-  result = RestClient.post "localhost:4000/heureka_reviews/save", :reviews => parsed_reviews
+  result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
 
   puts result
 end

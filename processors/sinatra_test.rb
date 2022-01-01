@@ -3,7 +3,11 @@ require 'sinatra'
 require 'smarter_csv'
 require 'roo-xls'
 require 'roo'
+require 'nori'
 require 'rest-client'
+require 'dotenv'
+
+Dotenv.load
 
 before do
   content_type :json
@@ -42,13 +46,30 @@ post '/gls_invoice/process' do
   #content_type :json
   #{ first_zaznam: transform[1] }.to_json
 
-  result = RestClient.post "localhost:4000/transport_invoices/save", :file_type => params[:file_type], :file => transform
+  #result = RestClient.post "localhost:4000/transport_invoices/save", :file_type => params[:file_type], :file => transform
+  result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
   puts result
 
   transform[1].to_json
   #render json: { first_zaznam: transform[1] }
   #puts transform
 
+end
+
+post '/heureka_reviews/process' do
+  #parsed_reviews = Nokogiri::XML.parse(params['reviews'])
+  parser = Nori.new
+  parsed_reviews = parser.parse(params['reviews'])
+  #parsed_reviews = Nori.parse(params['reviews'])
+  puts "\n\n\n\n"
+
+  #parsed_reviews['products']['product'].each do |product|
+  #  puts product['product_name']
+  #end
+
+  result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
+
+  puts result
 end
 
 private
