@@ -81,5 +81,8 @@ end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile], {col_sep: ';'})   # potrebujes file
+
+  result = RestClient.post "#{ENV.fetch("TRACKING_URL")}/package_tracking/save", :trackings => data
+  puts result
   {data: data}.to_json
 end

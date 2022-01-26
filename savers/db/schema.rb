@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_30_170954) do
+ActiveRecord::Schema.define(version: 2022_01_26_153023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,14 @@ ActiveRecord::Schema.define(version: 2021_12_30_170954) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "consignees", force: :cascade do |t|
+    t.string "name"
+    t.string "zipcode"
+    t.integer "country_code"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -40,6 +48,13 @@ ActiveRecord::Schema.define(version: 2021_12_30_170954) do
   create_table "dates", force: :cascade do |t|
     t.date "delivery_date"
     t.date "invoice_date"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+  end
+
+  create_table "depots", force: :cascade do |t|
+    t.integer "depot_code"
+    t.string "depot_name"
     t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
@@ -90,9 +105,46 @@ ActiveRecord::Schema.define(version: 2021_12_30_170954) do
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
 
+  create_table "services", force: :cascade do |t|
+    t.integer "service"
+    t.integer "add_service_1"
+    t.integer "add_service_2"
+    t.integer "add_service_3"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+  end
+
+  create_table "tracking_infos", force: :cascade do |t|
+    t.string "customer_reference"
+    t.text "info_text"
+    t.integer "weight"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "trackings", force: :cascade do |t|
+    t.string "parcel_no"
+    t.integer "scan_code"
+    t.datetime "date"
+    t.bigint "depot_id"
+    t.bigint "consignee_id"
+    t.bigint "service_id"
+    t.bigint "tracking_info_id"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.index ["consignee_id"], name: "index_trackings_on_consignee_id"
+    t.index ["depot_id"], name: "index_trackings_on_depot_id"
+    t.index ["service_id"], name: "index_trackings_on_service_id"
+    t.index ["tracking_info_id"], name: "index_trackings_on_tracking_info_id"
+  end
+
   add_foreign_key "invoices", "carriers"
   add_foreign_key "invoices", "countries"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "dates"
   add_foreign_key "products", "reviews"
+  add_foreign_key "trackings", "consignees"
+  add_foreign_key "trackings", "depots"
+  add_foreign_key "trackings", "services"
+  add_foreign_key "trackings", "tracking_infos"
 end

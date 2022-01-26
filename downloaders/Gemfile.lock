@@ -5,6 +5,7 @@ GEM
     connection_pool (2.2.5)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dotenv (2.7.6)
     et-orbi (1.2.6)
       tzinfo
     fugit (1.5.2)
@@ -42,6 +43,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  dotenv
   rest-client
   sidekiq
   sidekiq-cron

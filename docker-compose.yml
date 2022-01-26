@@ -6,10 +6,27 @@ services:
   #    - "4000:3000"
   #   problem s databazou :(
 
-  gls_processor:
+  processor:
     build: processors/.
     ports:
       - "4567:4567"
 
   saver:
     build: savers/.
+    ports:
+      - "4000:3000"
+
+  #heureka_dowloader:
+  #  build: downloaders/.
+  #  env_file:
+  #    - downloaders/.env
+  #  depends_on:
+  #    - sidekiq
+
+  sidekiq:
+    build: downloaders/.
+    env_file:
+      - downloaders/.env
+    entrypoint: bundle
+    command: exec sidekiq -r ./heureka_reviews_downloader.rb
+

@@ -9,7 +9,6 @@ class HeurekaReviewsController < ApplicationController
     parsed_reviews = params[:reviews]
 
     parsed_reviews['products']['product'].each do |product|
-      puts product['product_name']
       parse_review(product)
       parse_product(product, last_review_id)
       last_review_id += 1
@@ -32,16 +31,31 @@ class HeurekaReviewsController < ApplicationController
       puts unix_time_integer
       converted_time = Time.at(review['unix_timestamp'].to_i)
       if review.key?('summary')
-        @new_reviews.append({rating: review['rating'], summary: review['summary'], converted_timestamp: converted_time, original_id: review['rating_id'], unix_timestamp: review['unix_timestamp']})
+        @new_reviews.append({rating: review['rating'],
+                             summary: review['summary'],
+                             converted_timestamp: converted_time,
+                             original_id: review['rating_id'],
+                             unix_timestamp: review['unix_timestamp']})
       else
-        @new_reviews.append({rating: review['rating'], summary: nil, converted_timestamp: converted_time, original_id: review['rating_id'], unix_timestamp: review['unix_timestamp']})
+        @new_reviews.append({rating: review['rating'],
+                             summary: nil,
+                             converted_timestamp: converted_time,
+                             original_id: review['rating_id'],
+                             unix_timestamp: review['unix_timestamp']})
       end
       puts "\n\nlol\n\n"
     end
   end
 
   def parse_product(product, id)
-    new_product = {name: product['product_name'], url: product['url'], price: product['price'], rating: product['reviews']['review']['rating'], ean: product['ean'], product_number: product['productno'], order_id: product['order_id'], review_id: id}
+    new_product = {name: product['product_name'],
+                   url: product['url'],
+                   price: product['price'],
+                   rating: product['reviews']['review']['rating'],
+                   ean: product['ean'],
+                   product_number: product['productno'],
+                   order_id: product['order_id'],
+                   review_id: id}
     @new_products.append(new_product)
   end
 end
