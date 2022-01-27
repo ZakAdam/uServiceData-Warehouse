@@ -105,37 +105,30 @@ ActiveRecord::Schema.define(version: 2022_01_26_153023) do
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
 
-  create_table "services", force: :cascade do |t|
+  create_table "tracking_details", force: :cascade do |t|
     t.integer "service"
     t.integer "add_service_1"
     t.integer "add_service_2"
     t.integer "add_service_3"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
-  end
-
-  create_table "tracking_infos", force: :cascade do |t|
-    t.string "customer_reference"
     t.text "info_text"
     t.integer "weight"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
   end
 
   create_table "trackings", force: :cascade do |t|
     t.string "parcel_no"
     t.integer "scan_code"
     t.datetime "date"
+    t.string "customer_reference"
     t.bigint "depot_id"
     t.bigint "consignee_id"
-    t.bigint "service_id"
-    t.bigint "tracking_info_id"
+    t.bigint "tracking_detail_id"
     t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
     t.index ["consignee_id"], name: "index_trackings_on_consignee_id"
     t.index ["depot_id"], name: "index_trackings_on_depot_id"
-    t.index ["service_id"], name: "index_trackings_on_service_id"
-    t.index ["tracking_info_id"], name: "index_trackings_on_tracking_info_id"
+    t.index ["tracking_detail_id"], name: "index_trackings_on_tracking_detail_id"
   end
 
   add_foreign_key "invoices", "carriers"
@@ -145,6 +138,5 @@ ActiveRecord::Schema.define(version: 2022_01_26_153023) do
   add_foreign_key "products", "reviews"
   add_foreign_key "trackings", "consignees"
   add_foreign_key "trackings", "depots"
-  add_foreign_key "trackings", "services"
-  add_foreign_key "trackings", "tracking_infos"
+  add_foreign_key "trackings", "tracking_details"
 end

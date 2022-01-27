@@ -43,7 +43,6 @@ class HeurekaReviewsController < ApplicationController
                              original_id: review['rating_id'],
                              unix_timestamp: review['unix_timestamp']})
       end
-      puts "\n\nlol\n\n"
     end
   end
 
