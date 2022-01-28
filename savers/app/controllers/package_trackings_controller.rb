@@ -1,5 +1,6 @@
 class PackageTrackingsController < ApplicationController
   def new_tracking
+    start_time = Time.now
     @new_trackings = []
     @new_trackings_details = []
     @new_depot = []
@@ -11,7 +12,7 @@ class PackageTrackingsController < ApplicationController
     end
 
     trackings = params[:trackings]
-    
+
     trackings.each do |tracking|
       parse_tracking(tracking, last_id)
       parse_trackings_detail(tracking)
@@ -21,6 +22,8 @@ class PackageTrackingsController < ApplicationController
     Consignee.insert_all(@new_consignee)
     TrackingDetail.insert_all(@new_trackings_details)
     Tracking.insert_all(@new_trackings)
+
+    Log.create({log_type: "tracking", records_number: trackings.size, started_at: start_time, ended_at: Time.now})
   end
 
   private

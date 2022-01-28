@@ -1,5 +1,6 @@
 class TransportInvoicesController < ApplicationController
   def new_invoice
+    start_time = Time.now
     @new_dates = []
     @new_customers = []
     @new_invoice = []
@@ -28,6 +29,8 @@ class TransportInvoicesController < ApplicationController
     NewDate.insert_all(@new_dates)
     Customer.insert_all(@new_customers)
     Invoice.insert_all(@new_invoice)
+
+    Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now})
     @new_dates = []
     @new_customers = []
     @new_invoice = []

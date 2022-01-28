@@ -1,5 +1,6 @@
 class HeurekaReviewsController < ApplicationController
   def new_review
+    start_time = Time.now
     @new_reviews = []
     @new_products = []
     last_review_id = 1
@@ -8,17 +9,23 @@ class HeurekaReviewsController < ApplicationController
     end
     parsed_reviews = params[:reviews]
 
+    number_of_records = 0
+
     parsed_reviews['products']['product'].each do |product|
       parse_review(product)
       parse_product(product, last_review_id)
       last_review_id += 1
+      number_of_records = number_of_records + 1
     end
     Review.insert_all(@new_reviews)
     Product.insert_all(@new_products)
+
+    Log.create({log_type: "review", records_number: number_of_records, started_at: start_time, ended_at: Time.now})
   end
 
   private
   def parse_review(product)
+    puts 'pomoc'
     puts product
     product['reviews'].each do |review|
       puts review.class
