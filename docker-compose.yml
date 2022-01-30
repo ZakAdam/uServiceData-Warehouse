@@ -1,10 +1,9 @@
 version: '3.0'
 services:
-  #admin_service:
-  #  build: Admin-Service/.
-  #  ports:
-  #    - "4000:3000"
-  #   problem s databazou :(
+  admin_service:
+    build: Admin-Service/.
+    ports:
+      - "4001:3000"
 
   processor:
     build: processors/.
@@ -23,10 +22,18 @@ services:
   #  depends_on:
   #    - sidekiq
 
-  sidekiq:
-    build: downloaders/.
+  #sidekiq:
+  #  build: downloaders/.
+  #  env_file:
+  #    - downloaders/.env
+  #  entrypoint: bundle
+  #  command: exec sidekiq -r ./heureka_reviews_downloader.rb
+
+  tracking_sidekiq:
+    build: workers/
     env_file:
-      - downloaders/.env
-    entrypoint: bundle
-    command: exec sidekiq -r ./heureka_reviews_downloader.rb
+      - workers/.env
+    #volumes:
+    #  - /home/jakzak/Plocha/bakalarka/data-warehouse/Admin-Service/public/files:/data/
+    command: bundle exec sidekiq -r ./tracking_sidekiq.rb -C ./sidekiq.yml
 

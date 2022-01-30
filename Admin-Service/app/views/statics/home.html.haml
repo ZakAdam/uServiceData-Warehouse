@@ -1,6 +1,62 @@
+- @page_title = 'Admin Logs'
 - flash.each do |type, msg|
   %div
     = msg
     
-%h1= 'Rarity of names from customers'
-= pie_chart(@data)
+-#%h1= 'Rarity of names from customers'
+-#= pie_chart(@data)
+
+.card
+  .card-header.bg-light
+    -#.float-right
+      - if @site.is_address_book_master
+        = link_to fa_icon('plus fw') + t('admin.resources.new'), new_admin_church_path, class: 'btn btn-primary btn-sm ml-auto mt-1'
+      .dropdown.d-inline
+        %button#dropdownDownloadMenuButton.btn.btn-success.dropdown-toggle.btn-sm.ml-auto.mt-1{'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-toggle' => 'dropdown', type: 'button'}
+          = fa_icon('download fw') + t('admin.resources.download')
+        .dropdown-menu{"aria-labelledby" => "dropdownDownloadMenuButton"}
+          = link_to t('admin/church.index.download.alphabetically'), admin_churches_download_url(type: 'alphabetically'), class: 'dropdown-item'
+          = link_to t('admin/church.index.download.church_info'), admin_churches_download_url(type: 'info'), class: 'dropdown-item'
+          = link_to t('admin/church.index.download.addresses_excel'), admin_churches_download_url(type: 'addresses_exel'), class: 'dropdown-item'
+
+
+    %h5.text-weight-normal.pt-1
+      -#= fa_icon('list fw', class: 'text-primary')
+      = @page_title
+  .card-body
+    = link_to '/upload', '/upload'
+    -#.float-right.text-muted
+      = t 'admin.resources.count', count: number_with_delimiter(@churches.total_count)
+      \|
+      = t 'admin.resources.pages', count: number_with_delimiter(@churches.total_pages)
+    -#= paginate @churches
+
+    .table-responsive
+      %table.table
+        %thead
+          %tr
+            %th= 'Log type'
+            %th= 'Number of records'
+            %th= 'Started at'
+            %th= 'Ended at'
+            -#%th.actions= t('admin.resources.actions')
+        %tbody
+          - if @logs.count == 0
+            %tr
+              %td{colspan: 4}= 'There are no logs currently.'
+          - @logs.each do |log|
+            %tr
+              %td= log.log_type
+              %td= log.records_number
+              %td= log.started_at
+              %td= log.ended_at
+              -#%td.text-nowrap
+                = link_to fa_icon('sign-in-alt'), [:admin, church], class: 'btn btn-outline-secondary btn-sm', title: t('admin.resources.show')
+                = link_to fa_icon('edit fw'), edit_admin_church_path(church), class: 'btn btn-outline-primary btn-sm', title: t('admin.resources.edit')
+                - if @site.is_address_book_master
+                  = link_to fa_icon('times fw'), [:admin, church], method: :delete, data: { confirm: t('admin.resources.confirm_deletion') }, class: 'btn btn-outline-danger btn-sm', title: t('admin.resources.delete')
+    -#.float-right.text-muted
+      = t 'admin.resources.count', count: number_with_delimiter(@churches.total_count)
+      \|
+      = t 'admin.resources.pages', count: number_with_delimiter(@churches.total_pages)
+    -#= paginate @churches

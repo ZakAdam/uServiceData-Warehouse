@@ -20,7 +20,14 @@ end
 post '/gls_invoice/process' do
   'this is gls invoice process for their processing ;)'
 
+  puts 'lol'
+  puts params
   file = Roo::Spreadsheet.open(params['file'][:tempfile], extension: :xls)
+
+  #file_new = File.read(params[:file], encoding: 'ASCII-8BIT')
+  #file_new = File.read(params[:file])
+
+  #file = Roo::Spreadsheet.open(file_new, extension: :xls)
 
   rows = file.parse(headers: true)
   transform = rows.map do |row|
