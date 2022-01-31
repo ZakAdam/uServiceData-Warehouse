@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   get '/services', to: 'ping#index'
   get '/upload', to: 'posts#index'
   post '/upload', to: 'posts#create'
+  get '/get_file', to: 'posts#get_file'
 end
