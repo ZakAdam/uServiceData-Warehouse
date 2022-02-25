@@ -25,17 +25,8 @@ class HeurekaReviewsController < ApplicationController
 
   private
   def parse_review(product)
-    puts 'pomoc'
-    puts product
     product['reviews'].each do |review|
-      puts review.class
-      puts "\n////\n"
-      puts review
       review = review[1]      # odskusaj na viacej recenziach!!!
-      #review = review['review']
-      #puts review
-      unix_time_integer = review['unix_timestamp'].to_i
-      puts unix_time_integer
       converted_time = Time.at(review['unix_timestamp'].to_i)
       if review.key?('summary')
         @new_reviews.append({rating: review['rating'],

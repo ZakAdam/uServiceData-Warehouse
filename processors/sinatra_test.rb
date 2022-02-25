@@ -65,11 +65,12 @@ end
 
 post '/heureka_reviews/process' do
   #parsed_reviews = Nokogiri::XML.parse(params['reviews'])
-  file = File.open(params['reviews'][:tempfile])
+  #puts params
+  #file = File.open(params['reviews'][:tempfile])
 
   parser = Nori.new
-  #parsed_reviews = parser.parse(params['reviews'])
-  parsed_reviews = parser.parse(file.read)
+  parsed_reviews = parser.parse(params['reviews'])
+  #parsed_reviews = parser.parse(file.read)
 
   result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
 

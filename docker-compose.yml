@@ -22,12 +22,22 @@ services:
   #  depends_on:
   #    - sidekiq
 
-  #sidekiq:
-  #  build: downloaders/.
-  #  env_file:
-  #    - downloaders/.env
-  #  entrypoint: bundle
-  #  command: exec sidekiq -r ./heureka_reviews_downloader.rb
+  sidekiq-heureka:
+    build: downloaders/.
+    env_file:
+      - downloaders/.env
+    entrypoint: bundle
+    command: exec sidekiq -r ./heureka_reviews_downloader.rb
+
+  sidekiq-sftp:
+    build: downloaders/.
+    env_file:
+      - downloaders/.env
+    entrypoint: bundle
+    command:
+      - exec sidekiq -r ./sftp_csv_downloader.rb
+    volumes:
+      - /home/jakzak/Plocha/bakalarka/data-warehouse/downloaders/data:/data/
 
   tracking_sidekiq:
     build: workers/

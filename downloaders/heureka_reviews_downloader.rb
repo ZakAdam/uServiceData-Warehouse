@@ -22,11 +22,10 @@ class HeurekaReviewsDownloader
   sidekiq_options :retry => 0
 
   def perform
-    puts "\nLet sgoooooooooooooooooo, performujem, jako si vedel? :)\n"
     reviews = RestClient.get 'https://www.heureka.sk/direct/dotaznik/export-product-review.php?key=6f9ae66e45fc9983e0c9c99407071f77'
     result = RestClient.post "#{ENV['PROCESSOR_HOST']}/heureka_reviews/process", :reviews => reviews
   end
 end
 
-#Sidekiq::Cron::Job.create(name: 'Hard worker - every hour', cron: '0 * * * *', class: 'HeurekaReviewsDownloader')
-Sidekiq::Cron::Job.create(name: 'Hard worker - every hour', cron: '*/5 * * * *', class: 'HeurekaReviewsDownloader')
+Sidekiq::Cron::Job.create(name: 'Hard worker - every hour', cron: '0 0 * * *', class: 'HeurekaReviewsDownloader')
+#Sidekiq::Cron::Job.create(name: 'Hard worker - every hour', cron: '*/5 * * * *', class: 'HeurekaReviewsDownloader')
