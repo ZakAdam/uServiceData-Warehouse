@@ -36,18 +36,10 @@ class PackageTrackingsController < ApplicationController
   end
 
   def parse_consignee(tracking)
-    puts tracking[:name]
-    puts tracking[:zipcode]
-    puts tracking[:country_code]
-
     @new_consignee.append({name: tracking[:name], zipcode: tracking[:consignee_zip], country_code: tracking[:consignee_country_code]})
   end
 
   def parse_tracking(tracking, last_id)
-    puts tracking[:parcelno]
-    puts tracking[:scan_code]
-    puts tracking[:event_date_time]
-
     @new_trackings.append({parcel_no: tracking[:parcelno],
                            scan_code: tracking[:scan_code],
                            date: DateTime.parse(tracking[:event_date_time]),

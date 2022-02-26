@@ -22,7 +22,8 @@ class NewInvoiceUpload
 
   def perform(file_name)
     puts "\n\n"
-    response = RestClient.get "#{ENV.fetch("FILE_URL")}/get_file", {params: {name: file_name}}
+    #response = RestClient.get "#{ENV.fetch("FILE_URL")}/get_file", {params: {name: file_name}}
+    response = RestClient.get "admin_service:3000/get_file", {params: {name: file_name}}
     puts response
     puts 'Toto je vypis pri prilezitsti noveho uploadu :)'
     puts "\n\n"

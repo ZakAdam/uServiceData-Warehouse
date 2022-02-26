@@ -1,4 +1,4 @@
 ---
 :queues:
   - ["transport_invoices", 1]
-  #- ["sftp_queue", 1]
+  - ["sftp_queue", 1]

@@ -1,6 +1,8 @@
 require 'dotenv'
 require 'sidekiq'
 require 'net/sftp'
+require 'tempfile'
+require 'rest-client'
 
 Dotenv.load
 
@@ -17,11 +19,12 @@ end
 
 class SftpCsvDownloader
   include Sidekiq::Worker
+  sidekiq_options queue: 'sftp_queue'
 
   def perform(folder)
     options = {host: ENV['SFTP_HOST'],
-                user: ENV['SFTP_USER'],
-                password: ENV['SFTP_PASSWORD']}
+               user: ENV['SFTP_USER'],
+               password: ENV['SFTP_PASSWORD']}
 
     #sftp_options = {}
     #sftp_options[:password] = @options[:password] if options[:password].present?
@@ -34,8 +37,8 @@ class SftpCsvDownloader
     @sftp.connect!
 
     files = recursive_files(folder)
-    puts files
-    #read_file(files)
+    download_files(files)
+    process_files(files)
   end
 
   # Returns list of files inside all subfolders
@@ -57,16 +60,26 @@ class SftpCsvDownloader
     files
   end
 
-  # Must return IO rewinded to the beginning
-  def read_file(remote_path)
-    Tempfile.new(['DownloadedFile-', File.extname(remote_path)]).tap do |tempfile|
-      reconnect if @sftp.try(:closed?)
 
-      @sftp.download! remote_path, tempfile.path
+  def download_files(files)
+    files.each do |filename|
+      file = File.open("./#{filename}", 'w')
+      @sftp.download! filename, file.path
+      file.close
+    end
+  end
 
-      tempfile.rewind
+  def process_files(files)
+    puts 'AZ tu?'
+    files.each do |filename|
+      file = File.new("./#{filename}")
+      #result = RestClient.post "#{ENV['PROCESSOR_HOST']}/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
+      result = RestClient.post "processor:4567/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
+      file.close
+      puts result
+      #end
     end
   end
 end
 
-SftpCsvDownloader.perform_async('DPD')
+#SftpCsvDownloader.perform_async('DPD')

@@ -18,8 +18,6 @@ class PostsController < ApplicationController
     uploader = FileUploader.new
     if uploader.store!(params[:file])
       puts params
-      puts ';;;;;'
-      puts params[:file].original_filename
 
       #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => params[:file_type], :file => params[:file]
       result = NewInvoiceUpload.perform_async(params[:file].original_filename)
@@ -39,7 +37,8 @@ class PostsController < ApplicationController
     #puts file
     file = File.open("./public/files/#{file_name}")
 
-    result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => 'gls', :file => file
+    #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => 'gls', :file => file
+    result = RestClient.post "processor:4567/gls_invoice/process", :file_type => 'gls', :file => file
     puts result
   end
 end

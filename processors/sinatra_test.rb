@@ -18,16 +18,9 @@ get '/' do
 end
 
 post '/gls_invoice/process' do
-  'this is gls invoice process for their processing ;)'
-
   puts 'lol'
   puts params
   file = Roo::Spreadsheet.open(params['file'][:tempfile], extension: :xls)
-
-  #file_new = File.read(params[:file], encoding: 'ASCII-8BIT')
-  #file_new = File.read(params[:file])
-
-  #file = Roo::Spreadsheet.open(file_new, extension: :xls)
 
   rows = file.parse(headers: true)
   transform = rows.map do |row|
@@ -49,31 +42,16 @@ post '/gls_invoice/process' do
     }
   end
 
-  #puts transform[1]
-  #content_type :json
-  #{ first_zaznam: transform[1] }.to_json
-
-  #result = RestClient.post "localhost:4000/transport_invoices/save", :file_type => params[:file_type], :file => transform
-  result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
+  #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
+  result = RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform
   puts result
-
-  transform[1].to_json
-  #render json: { first_zaznam: transform[1] }
-  #puts transform
-
 end
 
 post '/heureka_reviews/process' do
-  #parsed_reviews = Nokogiri::XML.parse(params['reviews'])
-  #puts params
-  #file = File.open(params['reviews'][:tempfile])
-
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
-  #parsed_reviews = parser.parse(file.read)
-
-  result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
-
+  #result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
+  result = RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews
   puts result
 end
 
@@ -84,9 +62,9 @@ def get_customer_name(row)
 end
 
 post '/dpd_invoice/process' do
-  data = SmarterCSV.process(params['file'][:tempfile], {col_sep: ';'})   # potrebujes file
+  data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
 
-  result = RestClient.post "#{ENV.fetch("TRACKING_URL")}/package_tracking/save", :trackings => data
+  #result = RestClient.post "#{ENV.fetch("TRACKING_URL")}/package_tracking/save", :trackings => data
+  result = RestClient.post "saver:3000/package_tracking/save", :trackings => data
   puts result
-  {data: data}.to_json
 end
