@@ -11,6 +11,7 @@ Dotenv.load
 
 before do
   content_type :json
+  @docker_id = `cat /etc/hostname`
 end
 
 get '/' do
@@ -43,7 +44,7 @@ post '/gls_invoice/process' do
   end
 
   #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
-  result = RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform
+  result = RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id
   puts result
 end
 
@@ -51,7 +52,7 @@ post '/heureka_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
   #result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
-  result = RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews
+  result = RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
   puts result
 end
 
@@ -63,8 +64,8 @@ end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
-
+  #docker_id = `cat /etc/hostname`
   #result = RestClient.post "#{ENV.fetch("TRACKING_URL")}/package_tracking/save", :trackings => data
-  result = RestClient.post "saver:3000/package_tracking/save", :trackings => data
+  result = RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
   puts result
 end

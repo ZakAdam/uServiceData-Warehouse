@@ -19,6 +19,7 @@ end
 class NewInvoiceUpload
   include Sidekiq::Worker
   sidekiq_options queue: 'transport_invoices'
+  sidekiq_options :retry => 0
 
   def perform(file_name)
     puts "\n\n"

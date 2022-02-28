@@ -8,7 +8,7 @@ services:
   processor:
     build: processors/.
     ports:
-      - "4567:4567"
+      - "4567-4570:4567"
     links:
       - "saver:saver"
 
@@ -26,21 +26,21 @@ services:
   #    - sidekiq
 
   #########################################
-  #sidekiq-heureka:
-  #  build: downloaders/.
-  #  env_file:
-  #    - downloaders/.env
-  #  entrypoint: bundle
-  #  command: exec sidekiq -r ./heureka_reviews_downloader.rb
+  sidekiq-heureka:
+    build: downloaders/.
+    env_file:
+      - downloaders/.env
+    entrypoint: bundle
+    command: exec sidekiq -r ./heureka_reviews_downloader.rb
 
-  #sidekiq-sftp:
-  #  build: downloaders/.
-  #  env_file:
-  #    - downloaders/.env
-  #  entrypoint: bundle
-  #  command: exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
-  #  volumes:
-  #   - /home/jakzak/Plocha/bakalarka/data-warehouse/downloaders/DPD:/DPD/
+  sidekiq-sftp:
+    build: downloaders/.
+    env_file:
+      - downloaders/.env
+    entrypoint: bundle
+    command: exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
+    volumes:
+     - /home/jakzak/Plocha/bakalarka/data-warehouse/downloaders/DPD:/DPD/
 
   tracking_sidekiq:
     build: workers/

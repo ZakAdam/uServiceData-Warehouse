@@ -20,7 +20,10 @@ class HeurekaReviewsController < ApplicationController
     Review.insert_all(@new_reviews)
     Product.insert_all(@new_products)
 
-    Log.create({log_type: "review", records_number: number_of_records, started_at: start_time, ended_at: Time.now})
+    puts 'VYPIS'
+    puts system('cat /etc/hostname')
+    puts 'KONEC VYPISU'
+    Log.create({log_type: "review", records_number: number_of_records, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
   end
 
   private

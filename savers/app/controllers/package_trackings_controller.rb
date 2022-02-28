@@ -23,7 +23,7 @@ class PackageTrackingsController < ApplicationController
     TrackingDetail.insert_all(@new_trackings_details)
     Tracking.insert_all(@new_trackings)
 
-    Log.create({log_type: "tracking", records_number: trackings.size, started_at: start_time, ended_at: Time.now})
+    Log.create({log_type: "tracking", records_number: trackings.size, started_at: start_time, ended_at: Time.now}, information: params[:docker_id])
   end
 
   private

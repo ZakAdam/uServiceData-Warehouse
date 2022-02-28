@@ -20,17 +20,19 @@ class TransportInvoicesController < ApplicationController
       #    Country.create({ name: nil, code: row['country'] })
       #  end
       #end
-      date_process(row['invoice_date'], row['delivery_date'])
-      customer_process(row)
-      invoice_process(row, date_id, customer_id)
-      date_id = date_id + 1
-      customer_id = customer_id + 1
-    end
-    NewDate.insert_all(@new_dates)
-    Customer.insert_all(@new_customers)
-    Invoice.insert_all(@new_invoice)
 
-    Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now})
+      ##### TOTO JE DOBRE !!!!!! #####
+      #date_process(row['invoice_date'], row['delivery_date'])
+      #customer_process(row)
+      #invoice_process(row, date_id, customer_id)
+      #date_id = date_id + 1
+      #customer_id = customer_id + 1
+    end
+    #NewDate.insert_all(@new_dates)
+    #Customer.insert_all(@new_customers)
+    #Invoice.insert_all(@new_invoice)
+
+    Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
     @new_dates = []
     @new_customers = []
     @new_invoice = []
