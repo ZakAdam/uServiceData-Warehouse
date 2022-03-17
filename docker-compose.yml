@@ -16,7 +16,9 @@ services:
   saver:
     build: savers/.
     ports:
-      - "4000:3000"
+        - "3999-4000:3000"
+    #ports:
+    #  - "4000:3000"
   ###########################################
 
   #heureka_dowloader:
@@ -44,10 +46,16 @@ services:
      - /home/jakzak/Plocha/bakalarka/data-warehouse/downloaders/DPD:/DPD/
 
   tracking_sidekiq:
-    build: workers/
-    env_file:
-      - workers/.env
+    build:
+        context: ./Admin-Service
+        dockerfile: Dockerfile-sidekiq
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+  #tracking_sidekiq:
+  #  build: workers/
+  #  env_file:
+  #    - workers/.env
     #volumes:
     #  - /home/jakzak/Plocha/bakalarka/data-warehouse/Admin-Service/public/files:/data/
-    command: bundle exec sidekiq -r ./tracking_sidekiq.rb -C ./sidekiq.yml
-
+    #command: bundle exec sidekiq -r ./tracking_sidekiq.rb -C ./sidekiq.yml
+  #  command: bundle exec sidekiq -r AdminService -C ./workers/sidekiq.yml

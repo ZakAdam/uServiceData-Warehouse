@@ -1,6 +1,8 @@
 class TransportInvoicesController < ApplicationController
   def new_invoice
     start_time = Time.now
+    @countries = Country.all.map {|country| [country.code, country.id]}.to_h
+    @carriers = Carrier.all.map {|carrier| [carrier.name, carrier.id]}.to_h
     @new_dates = []
     @new_customers = []
     @new_invoice = []
@@ -22,34 +24,39 @@ class TransportInvoicesController < ApplicationController
       #end
 
       ##### TOTO JE DOBRE !!!!!! #####
-      #date_process(row['invoice_date'], row['delivery_date'])
-      #customer_process(row)
-      #invoice_process(row, date_id, customer_id)
-      #date_id = date_id + 1
-      #customer_id = customer_id + 1
+      date_process(row['invoice_date'], row['delivery_date'])
+      customer_process(row)
+      invoice_process(row, date_id, customer_id)
+      date_id = date_id + 1
+      customer_id = customer_id + 1
     end
-    #NewDate.insert_all(@new_dates)
-    #Customer.insert_all(@new_customers)
-    #Invoice.insert_all(@new_invoice)
+    NewDate.insert_all(@new_dates)
+    Customer.insert_all(@new_customers)
+    Invoice.insert_all(@new_invoice)
 
     Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
     @new_dates = []
     @new_customers = []
     @new_invoice = []
+    puts "Hotovka\n\n"
   end
 
   def invoice_process(row, date_id, customer_id)
-    country_id = Country.where(code: row['country']).first
+    country_id = @countries["#{row['country']}"]
+    #country_id = Country.where(code: row['country']).first
     if country_id.nil?
       country_id = Country.create({ name: nil, code: row['country'] })
+      @countries = Country.all.map {|country| [country.code, country.id]}.to_h
     end
-    country_id = country_id.id
+    #country_id = country_id.id
 
-    carrier_id = Carrier.where(name: row['carrier']).first
+    #carrier_id = Carrier.where(name: row['carrier']).first
+    carrier_id = @carriers["#{row['carrier']}"]
     if carrier_id.nil?
       carrier_id = Carrier.create(name: row['carrier'])
+      @carriers = Carrier.all.map {|carrier| [carrier.name, carrier.id]}.to_h
     end
-    carrier_id = carrier_id.id
+    #carrier_id = carrier_id.id
     @new_invoice.append({customer_id: customer_id, date_id: date_id, carrier_id: carrier_id, country_id: country_id, price: row['price'], fees: row['fees'], cash_on_delivery: row['delivery_cash']})
   end
 

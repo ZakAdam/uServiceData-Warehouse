@@ -19,8 +19,6 @@ get '/' do
 end
 
 post '/gls_invoice/process' do
-  puts 'lol'
-  puts params
   file = Roo::Spreadsheet.open(params['file'][:tempfile], extension: :xls)
 
   rows = file.parse(headers: true)
@@ -39,13 +37,12 @@ post '/gls_invoice/process' do
       city: row['Mesto'],
       zipcode: row['PSČ'],
       address: row['PostalAddr']
-
     }
   end
 
   #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
-  result = RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id
-  puts result
+  RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id
+  #puts result
 end
 
 post '/heureka_reviews/process' do
