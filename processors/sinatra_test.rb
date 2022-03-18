@@ -20,6 +20,7 @@ end
 
 post '/gls_invoice/process' do
   file = Roo::Spreadsheet.open(params['file'][:tempfile], extension: :xls)
+  jid = params[:jid]
 
   rows = file.parse(headers: true)
   transform = rows.map do |row|
@@ -41,7 +42,7 @@ post '/gls_invoice/process' do
   end
 
   #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
-  RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id
+  RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id, :jid => jid
   #puts result
 end
 

@@ -34,7 +34,7 @@ class TransportInvoicesController < ApplicationController
     Customer.insert_all(@new_customers)
     Invoice.insert_all(@new_invoice)
 
-    Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
+    Log.create({log_type: "invoice", records_number: data.size, started_at: start_time, ended_at: Time.now, information: params[:docker_id], jid: params[:jid]})
     @new_dates = []
     @new_customers = []
     @new_invoice = []

@@ -6,6 +6,7 @@ class CreateLogsTable < ActiveRecord::Migration[6.1]
       t.datetime :started_at
       t.datetime :ended_at
       t.string :information
+      t.string :jid
 
       t.timestamps
     end

@@ -21,7 +21,19 @@ class NewInvoiceUpload
   sidekiq_options :retry => 0
 
   def perform(file_name)
-    RestClient.get "admin_service:3000/get_file", {params: {name: file_name}}
+    puts "\nJID:\n"
+    puts self.jid
+    puts "\n\n"
+    begin
+      #RestClient.get "admin_service:3000/get_file", {params: {name: file_name, jid: self.jid}}
+      RestClient::Request.execute(method: :get, url: 'admin_service:3000/get_file',
+                                  timeout: 600, headers: {params: {name: file_name, jid: self.jid}})
+    rescue RestClient::Exceptions::ReadTimeout
+      puts "\n\nDoslo k timeoutu!\n\n"
+      puts self.jid
+      puts "\n\nJe tu ID? :O\n\n"
+      return
+    end
   end
 end
 

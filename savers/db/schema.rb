@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.datetime "started_at"
     t.datetime "ended_at"
     t.string "information"
+    t.string "jid"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
