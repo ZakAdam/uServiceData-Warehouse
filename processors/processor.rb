@@ -72,10 +72,8 @@ post '/single_reviews/process' do
     review_params = parse_review(product)
     product_params = parse_product(product)
 
-    puts 'VYSLEDOK'
-    puts review_params
-    result = StoreReview.perform_async(review_params, product_params)
-    puts result
+
+    StoreReview.perform_async(review_params, product_params)
   end
   puts 'LOOOOOOOOOOOl'
 end
@@ -87,7 +85,6 @@ def get_customer_name(row)
 end
 
 def parse_review(product)
-  puts product['reviews']
   review_params = []
   product['reviews'].each do |review|
     review = review[1]      # odskusaj na viacej recenziach!!!
