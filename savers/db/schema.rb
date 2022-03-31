@@ -100,20 +100,22 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.string "ean"
     t.string "product_number"
     t.bigint "order_id"
-    t.bigint "review_id"
     t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
-    t.index ["review_id"], name: "index_products_on_review_id"
   end
 
   create_table "reviews", force: :cascade do |t|
     t.integer "rating"
     t.text "summary"
+    t.text "pros"
+    t.text "cons"
     t.datetime "converted_timestamp"
     t.bigint "original_id"
     t.string "unix_timestamp"
+    t.bigint "product_id"
     t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.index ["product_id"], name: "index_reviews_on_product_id"
   end
 
   create_table "tracking_details", force: :cascade do |t|
@@ -146,7 +148,7 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
   add_foreign_key "invoices", "countries"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "dates"
-  add_foreign_key "products", "reviews"
+  add_foreign_key "reviews", "products"
   add_foreign_key "trackings", "consignees"
   add_foreign_key "trackings", "depots"
   add_foreign_key "trackings", "tracking_details"

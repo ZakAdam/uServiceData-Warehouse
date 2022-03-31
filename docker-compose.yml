@@ -8,6 +8,8 @@ services:
 
   processor:
     build: processors/.
+    env_file:
+      - processors/.env
     ports:
       - "4567-4570:4567"
     links:
@@ -50,6 +52,13 @@ services:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
     command: bundle exec sidekiq -C config/sidekiq.yml
+
+  single_reviews:
+      build: workers/
+      env_file:
+        - workers/.env
+      #entrypoint: bundle
+      command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
   #tracking_sidekiq:
   #  build: workers/

@@ -17,3 +17,6 @@ gem 'roo-xls'
 gem 'rest-client'
 gem 'nori'
 gem 'dotenv'
+
+gem 'sidekiq'
+gem 'sidekiq-cron'
