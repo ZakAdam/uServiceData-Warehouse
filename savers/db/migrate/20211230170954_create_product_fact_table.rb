@@ -8,7 +8,6 @@ class CreateProductFactTable < ActiveRecord::Migration[6.1]
       t.string :ean
       t.string :product_number
       t.bigint :order_id
-      t.references :review, foreign_key: { to_table: :reviews }, index: true
       t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
     end
   end

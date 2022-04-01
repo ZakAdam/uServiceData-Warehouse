@@ -1,3 +1,3 @@
-require './sinatra_test'
+require './processor'
 
 run Sinatra::Application

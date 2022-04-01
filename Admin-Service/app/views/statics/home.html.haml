@@ -39,6 +39,8 @@
             %th= 'Number of records'
             %th= 'Started at'
             %th= 'Ended at'
+            %th= 'Information'
+            %th= 'JID'
             -#%th.actions= t('admin.resources.actions')
         %tbody
           - if @logs.count == 0
@@ -50,6 +52,8 @@
               %td= log.records_number
               %td= log.started_at
               %td= log.ended_at
+              %td= log.information
+              %td= log.jid
               -#%td.text-nowrap
                 = link_to fa_icon('sign-in-alt'), [:admin, church], class: 'btn btn-outline-secondary btn-sm', title: t('admin.resources.show')
                 = link_to fa_icon('edit fw'), edit_admin_church_path(church), class: 'btn btn-outline-primary btn-sm', title: t('admin.resources.edit')

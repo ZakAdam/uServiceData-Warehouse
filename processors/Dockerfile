@@ -4,6 +4,7 @@ FROM ruby:3.0.1
 
 WORKDIR /code
 COPY . /code
+RUN bundle update
 RUN bundle install
 
 EXPOSE 4567

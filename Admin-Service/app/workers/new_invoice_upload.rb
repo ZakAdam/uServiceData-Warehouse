@@ -1,12 +1,39 @@
+require 'sidekiq'
+require 'rest-client'
+require 'dotenv'
+
+Dotenv.load
+
+sidekiq_config = { url: ENV['REDIS_SIDEKIQ_URL'] }
+#sidekiq_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
+
+Sidekiq.configure_server do |config|
+  config.redis = sidekiq_config
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = sidekiq_config
+end
+
 class NewInvoiceUpload
   include Sidekiq::Worker
   sidekiq_options queue: 'transport_invoices'
+  sidekiq_options :retry => 0
 
-  def perform(file)
+  def perform(file_name)
+    puts "\nJID:\n"
+    puts self.jid
     puts "\n\n"
-    result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => 'gls', :file => file
-    puts result
-    puts 'Toto je vypis pri prilezitsti noveho uploadu :)'
-    puts "\n\n"
+    begin
+      #RestClient.get "admin_service:3000/get_file", {params: {name: file_name, jid: self.jid}}
+      RestClient::Request.execute(method: :get, url: 'admin_service:3000/get_file',
+                                  timeout: 600, headers: {params: {name: file_name, jid: self.jid}})
+    rescue RestClient::Exceptions::ReadTimeout
+      puts "\n\nDoslo k timeoutu!\n\n"
+      puts self.jid
+      puts "\n\nJe tu ID? :O\n\n"
+      return
+    end
   end
 end
+

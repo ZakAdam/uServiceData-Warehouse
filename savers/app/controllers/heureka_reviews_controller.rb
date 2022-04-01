@@ -20,22 +20,16 @@ class HeurekaReviewsController < ApplicationController
     Review.insert_all(@new_reviews)
     Product.insert_all(@new_products)
 
-    Log.create({log_type: "review", records_number: number_of_records, started_at: start_time, ended_at: Time.now})
+    puts 'VYPIS'
+    puts system('cat /etc/hostname')
+    puts 'KONEC VYPISU'
+    Log.create({log_type: "review", records_number: number_of_records, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
   end
 
   private
   def parse_review(product)
-    puts 'pomoc'
-    puts product
     product['reviews'].each do |review|
-      puts review.class
-      puts "\n////\n"
-      puts review
       review = review[1]      # odskusaj na viacej recenziach!!!
-      #review = review['review']
-      #puts review
-      unix_time_integer = review['unix_timestamp'].to_i
-      puts unix_time_integer
       converted_time = Time.at(review['unix_timestamp'].to_i)
       if review.key?('summary')
         @new_reviews.append({rating: review['rating'],
