@@ -50,15 +50,14 @@ end
 post '/heureka_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
-  #result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
+
   result = RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
   puts result
 end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
-  #docker_id = `cat /etc/hostname`
-  #result = RestClient.post "#{ENV.fetch("TRACKING_URL")}/package_tracking/save", :trackings => data
+
   result = RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
   puts result
 end
@@ -87,23 +86,26 @@ end
 def parse_review(product)
   review_params = []
   product['reviews'].each do |review|
-    review = review[1]      # odskusaj na viacej recenziach!!!
+    review = review[1]
     converted_time = Time.at(review['unix_timestamp'].to_i)
-    if review.key?('summary')
-      review_params.append({rating: review['rating'],
-                           summary: review['summary'],
-                           converted_timestamp: converted_time,
-                           original_id: review['rating_id'],
-                           unix_timestamp: review['unix_timestamp'],
-                           product_id: nil})
-    else
-      review_params.append({rating: review['rating'],
-                           summary: nil,
-                           converted_timestamp: converted_time,
-                           original_id: review['rating_id'],
-                           unix_timestamp: review['unix_timestamp'],
-                           product_id: nil})
+    review_hash = {rating: review['rating'],
+                   summary: nil,
+                   converted_timestamp: converted_time,
+                   original_id: review['rating_id'],
+                   unix_timestamp: review['unix_timestamp'],
+                   product_id: nil}
+
+    if review.key?('pros')
+      review_hash[:pros] = review['pros']
     end
+    if review.key?('summary')
+      review_hash[:summary] = review['summary']
+    end
+    if review.key?('cons')
+      review_hash[:cons] = review['cons']
+    end
+    review_params.append(review_hash)
+
   end
   review_params
 end
