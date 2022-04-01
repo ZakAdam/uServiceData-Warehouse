@@ -3,7 +3,7 @@ class PackageTrackingsController < ApplicationController
     start_time = Time.now
     @new_trackings = []
     @new_trackings_details = []
-    @new_depot = []
+    @depots = Depot.all.map {|depot| [depot.depot_code, depot.id]}.to_h
     @new_consignee = []
 
     last_id = 1
@@ -23,20 +23,26 @@ class PackageTrackingsController < ApplicationController
     TrackingDetail.insert_all(@new_trackings_details)
     Tracking.insert_all(@new_trackings)
 
-    Log.create({log_type: "tracking", records_number: trackings.size, started_at: start_time, ended_at: Time.now}, information: params[:docker_id])
+    Log.create({log_type: "tracking", records_number: trackings.size, started_at: start_time, ended_at: Time.now, information: params[:docker_id]})
   end
 
   private
   def parse_depot(code, name)
-    depot_id = Depot.where(depot_code: code).first
+    depot_id = @depots[code.to_i]
+    puts depot_id
+    puts @depots
+
     if depot_id.nil?
-      depot_id = Depot.create({ depot_code: code, depot_name: name })
+      Depot.create({ depot_code: code, depot_name: name })
+      @depots = Depot.all.map {|depot| [depot.depot_code, depot.id]}.to_h
+      depot_id = @depots["#{code}"]
     end
-    depot_id = depot_id.id
+
+    depot_id
   end
 
   def parse_consignee(tracking)
-    @new_consignee.append({name: tracking[:name], zipcode: tracking[:consignee_zip], country_code: tracking[:consignee_country_code]})
+    @new_consignee.append({name: tracking[:receiver_name], zipcode: tracking[:consignee_zip], country_code: tracking[:consignee_country_code]})
   end
 
   def parse_tracking(tracking, last_id)

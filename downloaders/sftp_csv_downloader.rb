@@ -73,8 +73,10 @@ class SftpCsvDownloader
     puts 'AZ tu?'
     files.each do |filename|
       file = File.new("./#{filename}")
-      #result = RestClient.post "#{ENV['PROCESSOR_HOST']}/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
+
       result = RestClient.post "processor:4567/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
+      #result = RestClient.post "processor:4567/package_tracking/process", :file => file, :content_type => 'application/octet-stream'
+
       file.close
       puts result
       #end

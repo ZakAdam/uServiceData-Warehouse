@@ -43,12 +43,11 @@ class TransportInvoicesController < ApplicationController
 
   def invoice_process(row, date_id, customer_id)
     country_id = @countries["#{row['country']}"]
-    #country_id = Country.where(code: row['country']).first
+
     if country_id.nil?
       country_id = Country.create({ name: nil, code: row['country'] })
       @countries = Country.all.map {|country| [country.code, country.id]}.to_h
     end
-    #country_id = country_id.id
 
     #carrier_id = Carrier.where(name: row['carrier']).first
     carrier_id = @carriers["#{row['carrier']}"]

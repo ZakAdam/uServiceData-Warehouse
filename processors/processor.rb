@@ -6,6 +6,7 @@ require 'roo'
 require 'nori'
 require 'rest-client'
 require 'dotenv'
+require 'json'
 require_relative 'lib/reviews_sidekiq'
 
 Dotenv.load
@@ -32,7 +33,15 @@ post '/gls_invoice/process' do
       invoice_date: row['InvoiceDate'],
       delivery_date: row['DeliverDate'],
       delivery_cash: row['Dobierka'],
-      fees: row['TollFee'] + row['Diesel Fee'] + row['TransportFee'] + row['SVFee'] + row['CodFee'] + row['OverWeightFee'] + row['ExpressFee'] + row['CreditCardFee'] + row['ManualLabelFee'],
+      fees: row['TollFee'] +
+            row['Diesel Fee'] +
+            row['TransportFee'] +
+            row['SVFee'] +
+            row['CodFee'] +
+            row['OverWeightFee'] +
+            row['ExpressFee'] +
+            row['CreditCardFee'] +
+            row['ManualLabelFee'],
       price: row['Cena'],
       country: row['Štát'],
       customer: get_customer_name(row['PostalAddr'].to_s),
@@ -42,9 +51,7 @@ post '/gls_invoice/process' do
     }
   end
 
-  #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/transport_invoices/save", :file_type => params[:file_type], :file => transform
   RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id, :jid => jid
-  #puts result
 end
 
 post '/heureka_reviews/process' do
@@ -62,10 +69,33 @@ post '/dpd_invoice/process' do
   puts result
 end
 
+post '/package_tracking/process' do
+  data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
+
+  response = RestClient.get 'saver:3000/package_simple/last_id'
+  last_id = JSON.parse(response.body)['id']
+  response = RestClient.get 'saver:3000/package_simple/depots'
+  @depots = JSON.parse(response.body)
+
+
+  new_trackings = []
+  new_trackings_details = []
+  new_consignee = []
+
+  data.each do |tracking|
+    new_trackings = parse_tracking(tracking, last_id, new_trackings)
+    new_trackings_details = parse_trackings_detail(tracking, new_trackings_details)
+    new_consignee = parse_consignee(tracking, new_consignee)
+    last_id = last_id + 1
+  end
+
+  result = RestClient.post "saver:3000/package_simple/save", :new_trackings => new_trackings, :new_trackings_details => new_trackings_details, :new_consignee => new_consignee, :docker_id => @docker_id
+  puts result
+end
+
 post '/single_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
-  #result = RestClient.post "#{ENV.fetch("HEUREKA_URL")}/heureka_reviews/save", :reviews => parsed_reviews
 
   parsed_reviews['products']['product'].each do |product|
     review_params = parse_review(product)
@@ -74,7 +104,6 @@ post '/single_reviews/process' do
 
     StoreReview.perform_async(review_params, product_params)
   end
-  puts 'LOOOOOOOOOOOl'
 end
 
 private
@@ -118,4 +147,41 @@ def parse_product(product)
                  ean: product['ean'],
                  product_number: product['productno'],
                  order_id: product['order_id']}
+end
+
+# for DPD invoices
+def parse_depot(code, name)
+  depot_id = @depots["#{code}"]
+  if depot_id.nil?
+    @depots = RestClient.post 'saver:3000/package_simple/new_depot', code: code, name: name
+    depot_id = @depots["#{code}"]
+  end
+  depot_id
+end
+
+def parse_consignee(tracking, new_consignee)
+  new_consignee.append({name: tracking[:receiver_name], zipcode: tracking[:consignee_zip], country_code: tracking[:consignee_country_code]})
+  new_consignee
+end
+
+def parse_tracking(tracking, last_id, new_trackings)
+  new_trackings.append({parcel_no: tracking[:parcelno],
+                         scan_code: tracking[:scan_code],
+                         date: DateTime.parse(tracking[:event_date_time].to_s),
+                        #date: nil,
+                         customer_reference: tracking[:customer_reference],
+                         depot_id: parse_depot(tracking[:depot_code], tracking[:depotname]),
+                         consignee_id: last_id,
+                         tracking_detail_id: last_id})
+  new_trackings
+end
+
+def parse_trackings_detail(tracking, new_trackings_details)
+  new_trackings_details.append({service: tracking[:service],
+                                 add_service_1: tracking[:add_service_1],
+                                 add_service_2: tracking[:add_service_2],
+                                 add_service_3: tracking[:add_service_3],
+                                 info_text: tracking[:info_text],
+                                 weight: tracking[:weight] })
+  new_trackings_details
 end
