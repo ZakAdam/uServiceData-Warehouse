@@ -17,13 +17,6 @@ class TransportInvoicesController < ApplicationController
     data.shift                      # Remove first element
 
     data.each do |row|
-      #unless Country.where(code: row['country']).exists?
-      #  unless row['country'].nil? or row['country'].length > 2
-      #    Country.create({ name: nil, code: row['country'] })
-      #  end
-      #end
-
-      ##### TOTO JE DOBRE !!!!!! #####
       date_process(row['invoice_date'], row['delivery_date'])
       customer_process(row)
       invoice_process(row, date_id, customer_id)
@@ -38,7 +31,6 @@ class TransportInvoicesController < ApplicationController
     @new_dates = []
     @new_customers = []
     @new_invoice = []
-    puts "Hotovka\n\n"
   end
 
   def invoice_process(row, date_id, customer_id)
@@ -49,13 +41,12 @@ class TransportInvoicesController < ApplicationController
       @countries = Country.all.map {|country| [country.code, country.id]}.to_h
     end
 
-    #carrier_id = Carrier.where(name: row['carrier']).first
     carrier_id = @carriers["#{row['carrier']}"]
     if carrier_id.nil?
       carrier_id = Carrier.create(name: row['carrier'])
       @carriers = Carrier.all.map {|carrier| [carrier.name, carrier.id]}.to_h
     end
-    #carrier_id = carrier_id.id
+
     @new_invoice.append({customer_id: customer_id, date_id: date_id, carrier_id: carrier_id, country_id: country_id, price: row['price'], fees: row['fees'], cash_on_delivery: row['delivery_cash']})
   end
 

@@ -168,7 +168,6 @@ def parse_tracking(tracking, last_id, new_trackings)
   new_trackings.append({parcel_no: tracking[:parcelno],
                          scan_code: tracking[:scan_code],
                          date: DateTime.parse(tracking[:event_date_time].to_s),
-                        #date: nil,
                          customer_reference: tracking[:customer_reference],
                          depot_id: parse_depot(tracking[:depot_code], tracking[:depotname]),
                          consignee_id: last_id,

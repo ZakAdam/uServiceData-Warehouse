@@ -26,12 +26,7 @@ class SftpCsvDownloader
                user: ENV['SFTP_USER'],
                password: ENV['SFTP_PASSWORD']}
 
-    #sftp_options = {}
-    #sftp_options[:password] = @options[:password] if options[:password].present?
-    puts 'More'
-    puts options[:host]
     @session = Net::SSH.start(options[:host], options[:user], { password: options[:password] })
-    puts 'SESSION'
     @sftp = Net::SFTP::Session.new(@session)
 
     @sftp.connect!
@@ -70,7 +65,6 @@ class SftpCsvDownloader
   end
 
   def process_files(files)
-    puts 'AZ tu?'
     files.each do |filename|
       file = File.new("./#{filename}")
 
@@ -79,7 +73,6 @@ class SftpCsvDownloader
 
       file.close
       puts result
-      #end
     end
   end
 end
