@@ -21,20 +21,7 @@ class StoreReview
   sidekiq_options queue: 'heureka_single'
   sidekiq_options :retry => 0
 
-  puts 'PLZzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz'
   def perform(review_params, product_params)
-    puts "\n\n"
-
-    puts 'HALOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
-    #response = RestClient.get "#{ENV.fetch("FILE_URL")}/get_file", {params: {name: file_name}}
-    #response = RestClient.get "admin_service:3000/get_file", {params: {name: file_name}}
-    #RestClient.post "saver:3000/review/save", {params: {review: review_params, product: product_params}}
-
-    puts review_params
-    puts product_params
-
     RestClient.post "saver:3000/review/save", review_param: review_params, product_param: product_params, docker_id: '¯\_(ツ)_/¯'
-
-    puts 'Skoncil som poslanie na StoreReivew'
   end
 end
