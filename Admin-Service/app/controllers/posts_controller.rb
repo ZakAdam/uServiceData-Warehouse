@@ -25,15 +25,16 @@ class PostsController < ApplicationController
     jid = params[:jid]
     #uploader = FileUploader.new
     #file = uploader.retrieve_from_store!(file_name)
-    #puts file
+
     file = File.open("./public/files/#{file_name}")
+    #file = File.new("./public/files/#{file_name}", 'rb')
 
-    puts "FILE NAME:\n"
-    puts file_name
-    puts "\n\n"
-
-    File.open('Requests.txt', 'a') { |fileN| fileN.write(file_name + "\n") }
     #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => 'gls', :file => file
+    
     RestClient.post "processor:4567/gls_invoice/process", :file_type => 'gls', :file => file, :jid => jid
+    
+    
+    #RestClient::Request.execute(method: :post, url: 'processor:4567/gls_invoice/process',
+    #                            timeout: 600, payload: file ,headers: {params: {file_type: 'gls', jid: jid}})
   end
 end

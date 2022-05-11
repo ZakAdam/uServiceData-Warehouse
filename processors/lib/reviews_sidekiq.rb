@@ -6,7 +6,6 @@ require 'dotenv'
 Dotenv.load
 
 sidekiq_config = { url: ENV['REDIS_SIDEKIQ_URL'] }
-#sidekiq_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
 
 Sidekiq.configure_server do |config|
   config.redis = sidekiq_config
@@ -19,7 +18,7 @@ end
 class StoreReview
   include Sidekiq::Worker
   sidekiq_options queue: 'heureka_single'
-  sidekiq_options :retry => 0
+  sidekiq_options :retry => 2
 
   def perform(review_params, product_params)
     docker_id = `cat /etc/hostname`

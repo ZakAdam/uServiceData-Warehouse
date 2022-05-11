@@ -7,7 +7,6 @@ require 'rest-client'
 Dotenv.load
 
 sidekiq_config = { url: ENV['REDIS_SIDEKIQ_URL'] }
-#sidekiq_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
 
 Sidekiq.configure_server do |config|
   config.redis = sidekiq_config
@@ -68,11 +67,10 @@ class SftpCsvDownloader
     files.each do |filename|
       file = File.new("./#{filename}")
 
-      result = RestClient.post "processor:4567/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
-      #result = RestClient.post "processor:4567/package_tracking/process", :file => file, :content_type => 'application/octet-stream'
+      #result = RestClient.post "processor:4567/dpd_invoice/process", :file => file, :content_type => 'application/octet-stream'
+      RestClient.post "processor:4567/package_tracking/process", :file => file, :content_type => 'application/octet-stream'
 
       file.close
-      puts result
     end
   end
 end

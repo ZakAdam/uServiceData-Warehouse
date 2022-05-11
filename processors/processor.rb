@@ -5,11 +5,8 @@ require 'roo-xls'
 require 'roo'
 require 'nori'
 require 'rest-client'
-require 'dotenv'
 require 'json'
 require_relative 'lib/reviews_sidekiq'
-
-Dotenv.load
 
 before do
   content_type :json
@@ -58,15 +55,13 @@ post '/heureka_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
 
-  result = RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
-  puts result
+  RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
 end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
 
-  result = RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
-  puts result
+  RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
 end
 
 post '/package_tracking/process' do
@@ -89,8 +84,7 @@ post '/package_tracking/process' do
     last_id = last_id + 1
   end
 
-  result = RestClient.post "saver:3000/package_simple/save", :new_trackings => new_trackings, :new_trackings_details => new_trackings_details, :new_consignee => new_consignee, :docker_id => @docker_id
-  puts result
+  RestClient.post "saver:3000/package_simple/save", :new_trackings => new_trackings, :new_trackings_details => new_trackings_details, :new_consignee => new_consignee, :docker_id => @docker_id
 end
 
 post '/single_reviews/process' do

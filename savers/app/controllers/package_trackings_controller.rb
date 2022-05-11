@@ -29,8 +29,6 @@ class PackageTrackingsController < ApplicationController
   private
   def parse_depot(code, name)
     depot_id = @depots[code.to_i]
-    puts depot_id
-    puts @depots
 
     if depot_id.nil?
       Depot.create({ depot_code: code, depot_name: name })
