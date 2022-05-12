@@ -1,7 +1,5 @@
 class StaticsController < ApplicationController
   def home
-    #json = RestClient.get 'localhost:3000/firstname'
-    #@data = JSON.parse(json)
-    @logs = Log.all.order(started_at: :desc)
+    @logs = Log.all.order(started_at: :desc).limit(100)
   end
 end

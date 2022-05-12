@@ -20,7 +20,8 @@ class SftpCsvDownloader
   include Sidekiq::Worker
   sidekiq_options queue: 'sftp_queue'
 
-  def perform(folder)
+  def perform
+    folder = ENV['FILES_PATH']
     options = {host: ENV['SFTP_HOST'],
                user: ENV['SFTP_USER'],
                password: ENV['SFTP_PASSWORD']}
@@ -75,4 +76,7 @@ class SftpCsvDownloader
   end
 end
 
-#SftpCsvDownloader.perform_async('DPD')
+
+if ENV['START-JOB'] == true
+  SftpCsvDownloader.perform_async
+end

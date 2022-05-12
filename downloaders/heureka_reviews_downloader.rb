@@ -32,5 +32,10 @@ class HeurekaReviewsDownloader
   end
 end
 
-#HeurekaReviewsDownloader.perform_async
-#Sidekiq::Cron::Job.create(name: 'Hard worker - every hour', cron: '0 0 * * *', class: 'HeurekaReviewsDownloader')
+if ENV['START-JOB'] == true
+  HeurekaReviewsDownloader.perform_async
+end
+
+if ENV['SCHEDULE-JOB'] == true
+  Sidekiq::Cron::Job.create(name: 'Heureka downloader', cron: ENV['CRON'], class: 'HeurekaReviewsDownloader')
+end

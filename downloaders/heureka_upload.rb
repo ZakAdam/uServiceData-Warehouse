@@ -1,4 +1,4 @@
-load '../downloaders/heureka_reviews_downloader.rb'
+load 'heureka_reviews_downloader.rb'
 
 puts Time.now
 

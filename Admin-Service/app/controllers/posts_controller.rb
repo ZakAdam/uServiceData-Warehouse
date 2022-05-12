@@ -7,13 +7,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    #result = RestClient.post "localhost:4001/new_file", {'x' => 1}.to_json, {content_type: :json, accept: :json}
-
-    #result = NewInvoiceUpload.perform_async(params[:file])
-
     uploader = FileUploader.new
     if uploader.store!(params[:file])
-      #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => params[:file_type], :file => params[:file]
       NewInvoiceUpload.perform_async(params[:file].original_filename)
 
       redirect_to root_path, notice: 'File successfully uploaded!'
@@ -23,18 +18,8 @@ class PostsController < ApplicationController
   def get_file
     file_name = params[:name].tr(' ', '_')
     jid = params[:jid]
-    #uploader = FileUploader.new
-    #file = uploader.retrieve_from_store!(file_name)
 
     file = File.open("./public/files/#{file_name}")
-    #file = File.new("./public/files/#{file_name}", 'rb')
-
-    #result = RestClient.post "#{ENV.fetch("TRANSPORT_URL")}/gls_invoice/process", :file_type => 'gls', :file => file
-    
     RestClient.post "processor:4567/gls_invoice/process", :file_type => 'gls', :file => file, :jid => jid
-    
-    
-    #RestClient::Request.execute(method: :post, url: 'processor:4567/gls_invoice/process',
-    #                            timeout: 600, payload: file ,headers: {params: {file_type: 'gls', jid: jid}})
   end
 end

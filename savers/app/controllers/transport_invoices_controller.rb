@@ -37,14 +37,16 @@ class TransportInvoicesController < ApplicationController
     country_id = @countries["#{row['country']}"]
 
     if country_id.nil?
-      country_id = Country.create({ name: nil, code: row['country'] })
+      Country.create({ name: nil, code: row['country'] })
       @countries = Country.all.map {|country| [country.code, country.id]}.to_h
+      country_id = @countries["#{row['country']}"]
     end
 
     carrier_id = @carriers["#{row['carrier']}"]
     if carrier_id.nil?
-      carrier_id = Carrier.create(name: row['carrier'])
+      Carrier.create(name: row['carrier'])
       @carriers = Carrier.all.map {|carrier| [carrier.name, carrier.id]}.to_h
+      carrier_id = @carriers["#{row['carrier']}"]
     end
 
     @new_invoice.append({customer_id: customer_id, date_id: date_id, carrier_id: carrier_id, country_id: country_id, price: row['price'], fees: row['fees'], cash_on_delivery: row['delivery_cash']})
