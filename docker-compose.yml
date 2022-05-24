@@ -40,8 +40,8 @@ services:
       - SINGLE=true
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
       - START-JOB=false
-      - SCHEDULE-JOB=false
-      - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
+      - SCHEDULE-JOB=true
+      - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
     command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
 
   sidekiq-sftp:
@@ -54,6 +54,8 @@ services:
       - SFTP_PASSWORD=postgres
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
       - START-JOB=false
+      - SCHEDULE-JOB=false
+      - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
 
   tracking_sidekiq:
     build:

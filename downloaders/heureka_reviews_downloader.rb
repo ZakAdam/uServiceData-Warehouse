@@ -32,10 +32,11 @@ class HeurekaReviewsDownloader
   end
 end
 
-if ENV['START-JOB'] == true
+if ENV['START-JOB'] == 'true'
   HeurekaReviewsDownloader.perform_async
 end
 
-if ENV['SCHEDULE-JOB'] == true
-  Sidekiq::Cron::Job.create(name: 'Heureka downloader', cron: ENV['CRON'], class: 'HeurekaReviewsDownloader')
+if ENV['SCHEDULE-JOB'] == 'true'
+  time = ENV['CRON'].gsub(/"|'/, '')
+  Sidekiq::Cron::Job.create(name: '5 Heureka downloader', cron: time, class: 'HeurekaReviewsDownloader')
 end

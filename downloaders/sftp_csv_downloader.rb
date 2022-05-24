@@ -1,5 +1,6 @@
 require 'dotenv'
 require 'sidekiq'
+require 'sidekiq-cron'
 require 'net/sftp'
 require 'tempfile'
 require 'rest-client'
@@ -77,6 +78,11 @@ class SftpCsvDownloader
 end
 
 
-if ENV['START-JOB'] == true
+if ENV['START-JOB'] == 'true'
   SftpCsvDownloader.perform_async
+end
+
+if ENV['SCHEDULE-JOB'] == 'true'
+  time = ENV['CRON'].gsub(/"|'/, '')
+  Sidekiq::Cron::Job.create(name: 'SFTP-DPD downloader', cron: time, class: 'SftpCsvDownloader')
 end
