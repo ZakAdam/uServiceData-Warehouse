@@ -1,6 +1,6 @@
 version: '3.0'
 services:
-  admin_service:
+  @extract_admin_service:
     build: Admin-Service/.
     ports:
       - "4001:3000"
@@ -12,7 +12,7 @@ services:
       - POSTGRES_PORT=5432
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
 
-  processor:
+  @transform_processor:
     build: processors/.
     environment:
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
@@ -21,7 +21,7 @@ services:
     links:
       - "saver:saver"
 
-  saver:
+  @load_saver:
     build: savers/.
     ports:
         - "3950-4000:3000"
@@ -34,17 +34,17 @@ services:
       - POSTGRES_PORT=5432
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
 
-  sidekiq-heureka:
+  @extract_sidekiq-heureka:
     build: downloaders/.
     environment:
       - SINGLE=true
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
       - START-JOB=false
       - SCHEDULE-JOB=true
-      - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
+      - CRON='*/5 * * * *'
     command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
 
-  sidekiq-sftp:
+  @extract_sidekiq-sftp:
     build: downloaders/.
     command: bundle exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
     environment:
@@ -55,9 +55,9 @@ services:
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
       - START-JOB=false
       - SCHEDULE-JOB=false
-      - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
+      - CRON='0 0 * * *'
 
-  tracking_sidekiq:
+  @extract_tracking_sidekiq:
     build:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
@@ -65,7 +65,7 @@ services:
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
-  single_reviews:
+  @transform_single_reviews:
       build: workers/
       environment:
         - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
