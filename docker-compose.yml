@@ -2,16 +2,22 @@ version: '3.0'
 services:
   admin_service:
     build: Admin-Service/.
-    #entrypoint: /bin/docker-entrypoint.sh
     ports:
       - "4001:3000"
+    environment:
+      - POSTGRES_HOST=172.17.0.1
+      - POSTGRES_DB=admin_development
+      - POSTGRES_USER=adam_zak
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
 
   processor:
     build: processors/.
-    env_file:
-      - processors/.env
+    environment:
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
     ports:
-      - "4567-4570:4567"
+      - "4560-4570:4567"
     links:
       - "saver:saver"
 
@@ -19,52 +25,49 @@ services:
     build: savers/.
     ports:
         - "3950-4000:3000"
-    #ports:
-    #  - "4000:3000"
-  ###########################################
+    privileged: true
+    environment:
+      - POSTGRES_HOST=172.17.0.1
+      - POSTGRES_DB=savers_development
+      - POSTGRES_USER=adam_zak
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
 
-  #heureka_dowloader:
-  #  build: downloaders/.
-  #  env_file:
-  #    - downloaders/.env
-  #  depends_on:
-  #    - sidekiq
-
-  #########################################
   sidekiq-heureka:
     build: downloaders/.
-    env_file:
-      - downloaders/.env
-    entrypoint: bundle
-    command: exec sidekiq -r ./heureka_reviews_downloader.rb
+    environment:
+      - SINGLE=true
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - START-JOB=false
+      - SCHEDULE-JOB=true
+      - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
+    command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
 
   sidekiq-sftp:
     build: downloaders/.
-    env_file:
-      - downloaders/.env
-    entrypoint: bundle
-    command: exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
-    volumes:
-     - /home/jakzak/Plocha/bakalarka/data-warehouse/downloaders/DPD:/DPD/
+    command: bundle exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
+    environment:
+      - FILES_PATH=DPD
+      - SFTP_HOST=172.17.0.1
+      - SFTP_USER=sftp_user
+      - SFTP_PASSWORD=postgres
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - START-JOB=false
+      - SCHEDULE-JOB=false
+      - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
 
   tracking_sidekiq:
     build:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
+    environment:
+      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
       build: workers/
-      env_file:
-        - workers/.env
-      #entrypoint: bundle
+      environment:
+        - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      privileged: true
       command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
-
-  #tracking_sidekiq:
-  #  build: workers/
-  #  env_file:
-  #    - workers/.env
-    #volumes:
-    #  - /home/jakzak/Plocha/bakalarka/data-warehouse/Admin-Service/public/files:/data/
-    #command: bundle exec sidekiq -r ./tracking_sidekiq.rb -C ./sidekiq.yml
-  #  command: bundle exec sidekiq -r AdminService -C ./workers/sidekiq.yml
