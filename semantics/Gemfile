@@ -5,3 +5,5 @@ ruby '3.2.0'
 
 #gem 'nori'
 gem 'nokogiri'
+gem 'linkeddata'
+gem 'rdf'
