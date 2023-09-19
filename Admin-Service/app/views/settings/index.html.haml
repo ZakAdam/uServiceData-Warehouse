@@ -25,7 +25,6 @@
           %td= setting.updated_at
           %td= setting.options
           %td
-            = link_to 'Show', setting_path(setting), class: 'btn btn-outline-secondary btn-sm'
             = link_to 'Edit', edit_setting_path(setting), class: 'btn btn-outline-primary btn-sm'
             = link_to 'Delete', setting_path(setting), :method => :delete, class: 'btn btn-outline-danger btn-sm'
 

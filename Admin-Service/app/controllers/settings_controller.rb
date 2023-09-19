@@ -28,7 +28,7 @@ class SettingsController < ApplicationController
     @setting = Setting.find(params[:id])
 
     if @setting.update(setting_params)
-      redirect_to @setting, notice: 'JSONB data updated successfully.'
+      redirect_to settings_path, notice: 'JSONB data updated successfully.'
     else
       render :edit
     end
@@ -43,7 +43,6 @@ class SettingsController < ApplicationController
   private
 
   def setting_params
-    puts params
     params.require(:setting).permit(:options, :name, :username)
   end
 

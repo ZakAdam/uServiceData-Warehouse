@@ -17,7 +17,7 @@
         %div
         = form.label 'Options'
         %br/
-        = form.text_area :options
+        = form.text_area :options, rows: 10
         - @setting.errors.full_messages_for(:options).each do |message|
           %div= message
         %div
