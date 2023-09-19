@@ -1,0 +1,24 @@
+%section.py-5.text-center.container
+  .row.py-lg-5
+    .col-lg-6.col-md-8.mx-auto
+      = form_with model: @setting do |form|
+        %div
+        = form.label 'Name'
+        %br/
+        = form.text_field :name
+        - @setting.errors.full_messages_for(:name).each do |message|
+          %div= message
+        %div
+        = form.label 'Username'
+        %br/
+        = form.text_field :username
+        - @setting.errors.full_messages_for(:username).each do |message|
+          %div= message
+        %div
+        = form.label 'Options'
+        %br/
+        = form.text_area :options
+        - @setting.errors.full_messages_for(:options).each do |message|
+          %div= message
+        %div
+          = form.submit 'Submit'

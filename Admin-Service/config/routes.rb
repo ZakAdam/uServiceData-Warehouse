@@ -7,4 +7,6 @@ Rails.application.routes.draw do
   get '/upload', to: 'posts#index'
   post '/upload', to: 'posts#create'
   get '/get_file', to: 'posts#get_file'
+  resources :settings
+  #get '/settings', to: 'settings#index'
 end
