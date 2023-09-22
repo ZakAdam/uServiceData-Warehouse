@@ -3,24 +3,24 @@
 
 <http://warehouse.org/id/1> a warehouse:Supplier ;
 	rdfs:label "Heureka" ;
-	warehouse:fileType "XML" ;
-	warehouse:fileElements "products" ;
-	warehouse:fileElements "product" ;
-	warehouse:fileElements "product_name" ;
-	warehouse:fileElements "url" ;
-	warehouse:fileElements "cena" .
+	warehouse:fileType	<http://warehouse.org/type/2> ;
+	warehouse:fileElements 	<http://warehouse.org/column/17> ;
+	warehouse:fileElements 	<http://warehouse.org/column/18> ;
+	warehouse:fileElements 	<http://warehouse.org/column/19> ;
+	warehouse:fileElements 	<http://warehouse.org/column/20> ;
+	warehouse:fileElements 	<http://warehouse.org/column/21> .
 
 <http://warehouse.org/id/2> a warehouse:Supplier ;
 	rdfs:label "GLS" ;
-	warehouse:fileType "XLS" ;
-	warehouse:fileElements "SVFee" ;
-	warehouse:fileElements "CodFee" ;
-	warehouse:fileElements "PU-Country" ;
-	warehouse:fileElements "CreditCardFee" ;
-	warehouse:fileElements "ManualLabelFee" ;
-	warehouse:fileElements "Číslo balíka" ;
-	warehouse:fileElements "Vyzdvihnutie" ;
-	warehouse:fileElements "PSČ" .
+	warehouse:fileType 	<http://warehouse.org/type/3> ;
+	warehouse:fileElements 	<http://warehouse.org/column/16> ;
+	warehouse:fileElements 	<http://warehouse.org/column/9> ;
+	warehouse:fileElements 	<http://warehouse.org/column/10> ;
+	warehouse:fileElements 	<http://warehouse.org/column/11> ;
+	warehouse:fileElements 	<http://warehouse.org/column/12> ;
+	warehouse:fileElements 	<http://warehouse.org/column/13> ;
+	warehouse:fileElements 	<http://warehouse.org/column/14> ;
+	warehouse:fileElements 	<http://warehouse.org/column/15> .
 
 <http://warehouse.org/id/3> a warehouse:Supplier ;
 	rdfs:label "DPD" ;
@@ -34,38 +34,106 @@
 	warehouse:fileElements 	<http://warehouse.org/column/7> ;
 	warehouse:fileElements 	<http://warehouse.org/column/8> .
 
+# File Types
+
 <http://warehouse.org/type/1> a warehouse:Type ;
-	warehouse:label "CSV" ;
+	rdfs:label "CSV" ;
 	warehouse:fileEnding "csv" .
+	
+<http://warehouse.org/type/2> a warehouse:Type ;
+	rdfs:label "XML" ;
+	warehouse:fileEnding "xml" .
+	
+<http://warehouse.org/type/3> a warehouse:Type ;
+	rdfs:label "XLS" ;
+	warehouse:fileEnding "xls" .
+
+# ------ File columns for DPD supplier
 
 <http://warehouse.org/column/1> a warehouse:Column ;
-	warehouse:label "PARCELNO" ;
+	rdfs:label "PARCELNO" ;
 	warehouse:columnType "NUMBER" .
 	
 <http://warehouse.org/column/2> a warehouse:Column ;
-	warehouse:label "SCAN_CODE" ;
+	rdfs:label "SCAN_CODE" ;
 	warehouse:columnType "NUMBER" .
 	
 <http://warehouse.org/column/3> a warehouse:Column ;
-	warehouse:label "DEPOT_CODE" ;
+	rdfs:label "DEPOT_CODE" ;
 	warehouse:columnType "NUMBER" .
 	
 <http://warehouse.org/column/4> a warehouse:Column ;
-	warehouse:label "DEPOTNAME" ;
+	rdfs:label "DEPOTNAME" ;
 	warehouse:columnType "STRING" .
 	
 <http://warehouse.org/column/5> a warehouse:Column ;
-	warehouse:label "EVENT_DATE_TIME" ;
+	rdfs:label "EVENT_DATE_TIME" ;
 	warehouse:columnType "DATE" .
 	
 <http://warehouse.org/column/6> a warehouse:Column ;
-	warehouse:label "ROUTE" ;
+	rdfs:label "ROUTE" ;
 	warehouse:columnType "STRING" .
 	
 <http://warehouse.org/column/7> a warehouse:Column ;
-	warehouse:label "TOUR" ;
+	rdfs:label "TOUR" ;
 	warehouse:columnType "STRING" .
 	
 <http://warehouse.org/column/8> a warehouse:Column ;
-	warehouse:label "PCODE" ;
+	rdfs:label "PCODE" ;
 	warehouse:columnType "STRING" .
+	
+# ------ File columns for GLS supplier
+	
+<http://warehouse.org/column/9> a warehouse:Column ;
+	rdfs:label "CodFee" ;
+	warehouse:columnType "FLOAT" .
+	
+<http://warehouse.org/column/10> a warehouse:Column ;
+	rdfs:label "PU-Country" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/11> a warehouse:Column ;
+	rdfs:label "CreditCardFee" ;
+	warehouse:columnType "FLOAT" .
+	
+<http://warehouse.org/column/12> a warehouse:Column ;
+	rdfs:label "ManualLabelFee" ;
+	warehouse:columnType "FLOAT" .
+	
+<http://warehouse.org/column/13> a warehouse:Column ;
+	rdfs:label "Číslo balíka" ;
+	warehouse:columnType "NUMBER" .
+	
+<http://warehouse.org/column/14> a warehouse:Column ;
+	rdfs:label "Vyzdvihnutie" ;
+	warehouse:columnType "DATE" .
+	
+<http://warehouse.org/column/15> a warehouse:Column ;
+	rdfs:label "PSČ" ;
+	warehouse:columnType "NUMBER" .
+	
+<http://warehouse.org/column/16> a warehouse:Column ;
+	rdfs:label "SVFee" ;
+	warehouse:columnType "FLOAT" .
+	
+# ------ File columns for Heureka supplier
+	
+<http://warehouse.org/column/17> a warehouse:Column ;
+	rdfs:label "products" ;
+	warehouse:columnType "Object" .
+	
+<http://warehouse.org/column/18> a warehouse:Column ;
+	rdfs:label "product" ;
+	warehouse:columnType "Object" .
+	
+<http://warehouse.org/column/19> a warehouse:Column ;
+	rdfs:label "product_name" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/20> a warehouse:Column ;
+	rdfs:label "url" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/21> a warehouse:Column ;
+	rdfs:label "cena" ;
+	warehouse:columnType "FLOAT" .
