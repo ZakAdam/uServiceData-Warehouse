@@ -71,6 +71,21 @@ services:
         - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
       privileged: true
       command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
+
+  neo4j:
+    container_name: neo4j-compose
+    ports:
+      - '7687:7687'
+      - '7474:7474'
+    volumes:
+      - '$HOME/Data/neo4j/data:/data'
+      - '$HOME/Data/neo4j/logs:/logs'
+      - '$HOME/Data/neo4j/import:/var/lib/neo4j/import'
+      - '$HOME/Data/neo4j/plugins:/plugins'
+    environment:
+      - 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
+      - NEO4J_AUTH=none
+    image: 'neo4j:latest'
       
 # GraphDB      
 # docker run -p 127.0.0.1:7200:7200 --name graphdb-instance-name -t ontotext/graphdb:10.0.0
