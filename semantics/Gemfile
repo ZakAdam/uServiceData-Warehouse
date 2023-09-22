@@ -1,9 +1,12 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.0'
+ruby '3.2.2'
 
 #gem 'nori'
 gem 'nokogiri'
-gem 'linkeddata'
-gem 'rdf'
+#gem 'linkeddata'
+#gem 'rdf'
+
+gem 'activegraph', '>= 10.0.0'
+gem 'neo4j-ruby-driver'
