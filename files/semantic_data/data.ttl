@@ -24,13 +24,48 @@
 
 <http://warehouse.org/id/3> a warehouse:Supplier ;
 	rdfs:label "DPD" ;
-	warehouse:fileType "CSV" ;
-	warehouse:fileElements "PARCELNO" ;
-	warehouse:fileElements "SCAN_CODE" ;
-	warehouse:fileElements "DEPOT_CODE" ;
-	warehouse:fileElements "DEPOTNAME" ;
-	warehouse:fileElements "EVENT_DATE_TIME" ;
-	warehouse:fileElements "ROUTE" ;
-	warehouse:fileElements "TOUR" ;
-	warehouse:fileElements "PCODE" .
+	warehouse:fileType	<http://warehouse.org/type/1> ;
+	warehouse:fileElements	<http://warehouse.org/column/1> ;
+	warehouse:fileElements 	<http://warehouse.org/column/2> ;
+	warehouse:fileElements 	<http://warehouse.org/column/3> ;
+	warehouse:fileElements 	<http://warehouse.org/column/4> ;
+	warehouse:fileElements 	<http://warehouse.org/column/5> ;
+	warehouse:fileElements 	<http://warehouse.org/column/6> ;
+	warehouse:fileElements 	<http://warehouse.org/column/7> ;
+	warehouse:fileElements 	<http://warehouse.org/column/8> .
 
+<http://warehouse.org/type/1> a warehouse:Type ;
+	warehouse:label "CSV" ;
+	warehouse:fileEnding "csv" .
+
+<http://warehouse.org/column/1> a warehouse:Column ;
+	warehouse:label "PARCELNO" ;
+	warehouse:columnType "NUMBER" .
+	
+<http://warehouse.org/column/2> a warehouse:Column ;
+	warehouse:label "SCAN_CODE" ;
+	warehouse:columnType "NUMBER" .
+	
+<http://warehouse.org/column/3> a warehouse:Column ;
+	warehouse:label "DEPOT_CODE" ;
+	warehouse:columnType "NUMBER" .
+	
+<http://warehouse.org/column/4> a warehouse:Column ;
+	warehouse:label "DEPOTNAME" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/5> a warehouse:Column ;
+	warehouse:label "EVENT_DATE_TIME" ;
+	warehouse:columnType "DATE" .
+	
+<http://warehouse.org/column/6> a warehouse:Column ;
+	warehouse:label "ROUTE" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/7> a warehouse:Column ;
+	warehouse:label "TOUR" ;
+	warehouse:columnType "STRING" .
+	
+<http://warehouse.org/column/8> a warehouse:Column ;
+	warehouse:label "PCODE" ;
+	warehouse:columnType "STRING" .
