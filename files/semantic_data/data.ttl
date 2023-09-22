@@ -1,0 +1,36 @@
+@prefix warehouse: 	<http://warehouse.org/> .
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://warehouse.org/id/1> a warehouse:Supplier ;
+	rdfs:label "Heureka" ;
+	warehouse:fileType "XML" ;
+	warehouse:fileElements "products" ;
+	warehouse:fileElements "product" ;
+	warehouse:fileElements "product_name" ;
+	warehouse:fileElements "url" ;
+	warehouse:fileElements "cena" .
+
+<http://warehouse.org/id/2> a warehouse:Supplier ;
+	rdfs:label "GLS" ;
+	warehouse:fileType "XLS" ;
+	warehouse:fileElements "SVFee" ;
+	warehouse:fileElements "CodFee" ;
+	warehouse:fileElements "PU-Country" ;
+	warehouse:fileElements "CreditCardFee" ;
+	warehouse:fileElements "ManualLabelFee" ;
+	warehouse:fileElements "Číslo balíka" ;
+	warehouse:fileElements "Vyzdvihnutie" ;
+	warehouse:fileElements "PSČ" .
+
+<http://warehouse.org/id/3> a warehouse:Supplier ;
+	rdfs:label "DPD" ;
+	warehouse:fileType "CSV" ;
+	warehouse:fileElements "PARCELNO" ;
+	warehouse:fileElements "SCAN_CODE" ;
+	warehouse:fileElements "DEPOT_CODE" ;
+	warehouse:fileElements "DEPOTNAME" ;
+	warehouse:fileElements "EVENT_DATE_TIME" ;
+	warehouse:fileElements "ROUTE" ;
+	warehouse:fileElements "TOUR" ;
+	warehouse:fileElements "PCODE" .
+
