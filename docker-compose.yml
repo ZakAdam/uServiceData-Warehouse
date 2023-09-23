@@ -6,8 +6,8 @@ services:
       - "4001:3000"
     environment:
       - POSTGRES_HOST=172.17.0.1
-      - POSTGRES_DB=admin_development
-      - POSTGRES_USER=adam
+      - POSTGRES_DB=savers_development
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
       - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379

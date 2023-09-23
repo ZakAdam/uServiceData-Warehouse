@@ -1,4 +1,9 @@
-= form_with(url: {action: :create}, multipart: true) do |form|
-    = file_field_tag 'file'
-    = form.select :file_type, ['GLS', 'DHL']
-    = submit_tag("Upload")
+%section.py-5.text-center.container
+    .row.py-lg-5
+        .col-lg-6.col-md-8.mx-auto
+            = form_with(url: {action: :create}, multipart: true) do |form|
+                = file_field_tag 'file'
+                = form.select :file_type, %w[GLS DPD Heureka DHL]
+                %div
+                    = form.submit 'Upload'
+                -#= submit_tag("Upload")
