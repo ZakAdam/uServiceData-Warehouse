@@ -10,3 +10,22 @@ gem 'nokogiri'
 
 gem 'activegraph', '>= 10.0.0'
 gem 'neo4j-ruby-driver'
+
+## SINATRA gems
+gem 'sinatra'
+
+gem 'thin'
+gem 'puma'
+gem 'reel'
+gem 'http'
+gem 'webrick'
+
+gem 'smarter_csv'
+gem "roo", "~> 2.8.0"
+gem 'roo-xls'
+gem 'rest-client'
+gem 'nori'
+gem 'dotenv'
+
+gem 'sidekiq'
+gem 'sidekiq-cron'
