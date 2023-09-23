@@ -3,8 +3,8 @@
 
 <http://warehouse.org/id/1> a warehouse:Supplier ;
 	rdfs:label 		"Heureka" ;
-	warehouse:fileType	<http://warehouse.org/type/2> ;
-	warehouse:charSet	<http://warehouse.org/charset/1> ;
+	warehouse:HAS_fileType	<http://warehouse.org/type/2> ;
+	warehouse:HAS_charSet	<http://warehouse.org/charset/1> ;
 	warehouse:fileElements 	<http://warehouse.org/column/17> ;
 	warehouse:fileElements 	<http://warehouse.org/column/18> ;
 	warehouse:fileElements 	<http://warehouse.org/column/19> ;
@@ -13,8 +13,8 @@
 
 <http://warehouse.org/id/2> a warehouse:Supplier ;
 	rdfs:label 		"GLS" ;
-	warehouse:fileType 	<http://warehouse.org/type/3> ;
-	warehouse:charSet	<http://warehouse.org/charset/3> ;
+	warehouse:HAS_fileType 	<http://warehouse.org/type/3> ;
+	warehouse:HAS_charSet	<http://warehouse.org/charset/3> ;
 	warehouse:fileElements 	<http://warehouse.org/column/16> ;
 	warehouse:fileElements 	<http://warehouse.org/column/9> ;
 	warehouse:fileElements 	<http://warehouse.org/column/10> ;
@@ -26,8 +26,8 @@
 
 <http://warehouse.org/id/3> a warehouse:Supplier ;
 	rdfs:label 		"DPD" ;
-	warehouse:fileType	<http://warehouse.org/type/1> ;
-	warehouse:charSet	<http://warehouse.org/charset/2> ;
+	warehouse:HAS_fileType	<http://warehouse.org/type/1> ;
+	warehouse:HAS_charSet	<http://warehouse.org/charset/2> ;
 	warehouse:fileElements	<http://warehouse.org/column/1> ;
 	warehouse:fileElements 	<http://warehouse.org/column/2> ;
 	warehouse:fileElements 	<http://warehouse.org/column/3> ;
