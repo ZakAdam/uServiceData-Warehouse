@@ -1,0 +1,6 @@
+%section.py-5.text-center.container
+  .row.py-lg-5
+    .col-lg-6.col-md-8.mx-auto
+      %h1 New Model
+      = render partial: 'form', setting: @setting
+      = link_to 'Back', settings_path

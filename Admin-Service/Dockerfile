@@ -1,4 +1,4 @@
-FROM ruby:3.0.1
+FROM ruby:3.2.2
 
 RUN apt-get update \
 && apt-get install -y --no-install-recommends \
@@ -21,6 +21,8 @@ COPY . /app/
 ENV BUNDLE_PATH /gems
 RUN $HOME/.yarn/bin/yarn install
 RUN bundle install
+RUN $HOME/.yarn/bin/yarn add bootstrap@^5.3.2
+RUN $HOME/.yarn/bin/yarn add @popperjs/core
 
 ENTRYPOINT ["bin/rails"]
 CMD ["s", "-b", "0.0.0.0"]

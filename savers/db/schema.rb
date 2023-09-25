@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_28_102337) do
+ActiveRecord::Schema.define(version: 2023_09_19_121543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.string "name"
     t.string "zipcode"
     t.integer "country_code"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -41,22 +41,22 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.string "city"
     t.string "zipcode"
     t.string "address"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "dates", force: :cascade do |t|
     t.date "delivery_date"
     t.date "invoice_date"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "depots", force: :cascade do |t|
     t.integer "depot_code"
     t.string "depot_name"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -67,8 +67,8 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.decimal "price"
     t.decimal "fees"
     t.decimal "cash_on_delivery"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["carrier_id"], name: "index_invoices_on_carrier_id"
     t.index ["country_id"], name: "index_invoices_on_country_id"
     t.index ["customer_id"], name: "index_invoices_on_customer_id"
@@ -100,8 +100,8 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.string "ean"
     t.string "product_number"
     t.bigint "order_id"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -113,9 +113,17 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.bigint "original_id"
     t.string "unix_timestamp"
     t.bigint "product_id"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["product_id"], name: "index_reviews_on_product_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.string "name"
+    t.string "username"
+    t.jsonb "options", default: {}
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tracking_details", force: :cascade do |t|
@@ -125,8 +133,8 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.integer "add_service_3"
     t.text "info_text"
     t.integer "weight"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "trackings", force: :cascade do |t|
@@ -137,8 +145,8 @@ ActiveRecord::Schema.define(version: 2022_01_28_102337) do
     t.bigint "depot_id"
     t.bigint "consignee_id"
     t.bigint "tracking_detail_id"
-    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["consignee_id"], name: "index_trackings_on_consignee_id"
     t.index ["depot_id"], name: "index_trackings_on_depot_id"
     t.index ["tracking_detail_id"], name: "index_trackings_on_tracking_detail_id"
