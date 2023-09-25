@@ -6,6 +6,7 @@ require 'roo'
 require 'nori'
 require 'rest-client'
 require 'json'
+require './graph_access.rb'
 
 before do
   #content_type :json
@@ -13,7 +14,11 @@ before do
 end
 
 get '/' do
-  'Hello world!'
+  #'Hello world!'
+
+  query = QueryDB.new.process('.xml', 'utf-8')
+
+  query
 end
 
 post '/semantic/process' do
