@@ -23,4 +23,12 @@ class QueryDB
 
     return result.values.first.inspect.to_s
   end
+
+  def get_by_charset(charset)
+    Charset.find_by(rdfs__label: charset.upcase).suppliers(:s).pluck(:s)
+  end
+
+  def get_by_ending(file_ending)
+    Type.find_by(ns0__fileEnding: file_ending).suppliers(:s).pluck(:s)
+  end
 end

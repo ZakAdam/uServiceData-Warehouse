@@ -30,8 +30,11 @@ post '/semantic/process' do
   # 1. get file type
   file = params['file'][:tempfile]
 
+
   puts 'AWARE'
-  puts file_endings(file.path)
+  result = file_endings(file.path)
+  puts result
+  puts QueryDB.new.get_by_charset(result[2])
 end
 
 private
