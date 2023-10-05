@@ -6,6 +6,7 @@ require 'roo'
 require 'nori'
 require 'rest-client'
 require 'json'
+require 'nokogiri'
 require './graph_access.rb'
 
 before do
@@ -38,15 +39,46 @@ post '/semantic/process' do
 end
 
 post '/apache-tika' do
-  response = RestClient.post 'localhost:9998/rmeta/form/text', :upload => params['file'][:tempfile]
-  file_data = JSON.parse(response)[0]
+  headers = get_headers(params['file'][:tempfile])
+  language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
 
-  puts file_data.class
-
-  file_data.to_s
+  puts language, headers
+  headers
 end
 
 private
+
+def get_headers(file)
+  # testing file
+  # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
+  response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
+  file_data = JSON.parse(response)[0]
+  header_row = nil
+
+  if ['application/xml'].include?(file_data['Content-Type'])
+    # parse specific file types, such as XML
+    doc = File.open(file) { |f| Nokogiri::XML(f) }
+    header_row = doc.search('*').map(&:name).uniq.join(' ')
+  else
+    rows = file_data['X-TIKA:content'].split("\n")
+    rows.each do |line|
+      if line.strip != '' && !line.strip.match(/^Client_\d+_Inv/)
+        header_row = line
+        break
+      end
+    end
+
+    puts header_row
+    header_row
+  end
+end
+
+def get_language(headers)
+  language = RestClient.put('localhost:9998/language/stream', headers:)
+
+  puts "Language for the file is: #{language}"
+  language
+end
 
 # Later standalone service
 def file_endings(file)
@@ -70,18 +102,18 @@ post '/gls_invoice/process' do
 
   rows = file.parse(headers: true)
 
-  RestClient.post 'saver:3000/transport_invoices/save', :file_type => params[:file_type], :file => transform, :docker_id => @docker_id, :jid => jid
+  RestClient.post 'saver:3000/transport_invoices/save', file_type: params[:file_type], file: transform, docker_id: @docker_id, jid:
 end
 
 post '/heureka_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
 
-  RestClient.post 'saver:3000/heureka_reviews/save', :reviews => parsed_reviews, :docker_id => @docker_id
+  RestClient.post 'saver:3000/heureka_reviews/save', reviews: parsed_reviews, docker_id: @docker_id
 end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
 
-  RestClient.post 'saver:3000/package_tracking/save', :trackings => data, :docker_id => @docker_id
+  RestClient.post 'saver:3000/package_tracking/save', trackings: data, docker_id: @docker_id
 end

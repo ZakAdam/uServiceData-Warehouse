@@ -1,165 +1,215 @@
-@prefix warehouse: 	<http://warehouse.org/> .
-@prefix rdfs:		<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix warehouse: <http://warehouse.org/> .
+@prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://warehouse.org/id/1> a warehouse:Supplier ;
-	rdfs:label 		"Heureka" ;
-	warehouse:HAS_fileType	<http://warehouse.org/type/2> ;
-	warehouse:HAS_charSet	<http://warehouse.org/charset/1> ;
-	warehouse:fileElements 	<http://warehouse.org/column/17> ;
-	warehouse:fileElements 	<http://warehouse.org/column/18> ;
-	warehouse:fileElements 	<http://warehouse.org/column/19> ;
-	warehouse:fileElements 	<http://warehouse.org/column/20> ;
-	warehouse:fileElements 	<http://warehouse.org/column/21> .
+<http://warehouse.org/id/1>
+    a                      warehouse:Supplier ;
+    rdfs:label             "Heureka" ;
+    warehouse:HAS_fileType <http://warehouse.org/type/2> ;
+    warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
+    warehouse:HAS_language <http://warehouse.org/language/2> ;
+    warehouse:fileElements <http://warehouse.org/column/17> ;
+    warehouse:fileElements <http://warehouse.org/column/18> ;
+    warehouse:fileElements <http://warehouse.org/column/19> ;
+    warehouse:fileElements <http://warehouse.org/column/20> ;
+    warehouse:fileElements <http://warehouse.org/column/21> .
 
-<http://warehouse.org/id/2> a warehouse:Supplier ;
-	rdfs:label 		"GLS" ;
-	warehouse:HAS_fileType 	<http://warehouse.org/type/3> ;
-	warehouse:HAS_charSet	<http://warehouse.org/charset/3> ;
-	warehouse:fileElements 	<http://warehouse.org/column/16> ;
-	warehouse:fileElements 	<http://warehouse.org/column/9> ;
-	warehouse:fileElements 	<http://warehouse.org/column/10> ;
-	warehouse:fileElements 	<http://warehouse.org/column/11> ;
-	warehouse:fileElements 	<http://warehouse.org/column/12> ;
-	warehouse:fileElements 	<http://warehouse.org/column/13> ;
-	warehouse:fileElements 	<http://warehouse.org/column/14> ;
-	warehouse:fileElements 	<http://warehouse.org/column/15> .
+<http://warehouse.org/id/2>
+    a                      warehouse:Supplier ;
+    rdfs:label             "GLS" ;
+    warehouse:HAS_fileType <http://warehouse.org/type/3> ;
+    warehouse:HAS_charSet  <http://warehouse.org/charset/3> ;
+    warehouse:HAS_language <http://warehouse.org/language/2> ;
+    warehouse:fileElements <http://warehouse.org/column/16> ;
+    warehouse:fileElements <http://warehouse.org/column/9> ;
+    warehouse:fileElements <http://warehouse.org/column/10> ;
+    warehouse:fileElements <http://warehouse.org/column/11> ;
+    warehouse:fileElements <http://warehouse.org/column/12> ;
+    warehouse:fileElements <http://warehouse.org/column/13> ;
+    warehouse:fileElements <http://warehouse.org/column/14> ;
+    warehouse:fileElements <http://warehouse.org/column/15> .
 
-<http://warehouse.org/id/3> a warehouse:Supplier ;
-	rdfs:label 		"DPD" ;
-	warehouse:HAS_fileType	<http://warehouse.org/type/1> ;
-	warehouse:HAS_charSet	<http://warehouse.org/charset/2> ;
-	warehouse:fileElements	<http://warehouse.org/column/1> ;
-	warehouse:fileElements 	<http://warehouse.org/column/2> ;
-	warehouse:fileElements 	<http://warehouse.org/column/3> ;
-	warehouse:fileElements 	<http://warehouse.org/column/4> ;
-	warehouse:fileElements 	<http://warehouse.org/column/5> ;
-	warehouse:fileElements 	<http://warehouse.org/column/6> ;
-	warehouse:fileElements 	<http://warehouse.org/column/7> ;
-	warehouse:fileElements 	<http://warehouse.org/column/8> .
+<http://warehouse.org/id/3>
+    a                      warehouse:Supplier ;
+    rdfs:label             "DPD" ;
+    warehouse:HAS_fileType <http://warehouse.org/type/1> ;
+    warehouse:HAS_charSet  <http://warehouse.org/charset/2> ;
+    warehouse:HAS_language <http://warehouse.org/language/3> ;
+    warehouse:fileElements <http://warehouse.org/column/1> ;
+    warehouse:fileElements <http://warehouse.org/column/2> ;
+    warehouse:fileElements <http://warehouse.org/column/3> ;
+    warehouse:fileElements <http://warehouse.org/column/4> ;
+    warehouse:fileElements <http://warehouse.org/column/5> ;
+    warehouse:fileElements <http://warehouse.org/column/6> ;
+    warehouse:fileElements <http://warehouse.org/column/7> ;
+    warehouse:fileElements <http://warehouse.org/column/8> .
+
+# Languages
+<http://warehouse.org/language/1>
+    a              warehouse:Language ;
+    rdfs:label     "Slovak" ;
+    warehouse:code "sk" .
+
+<http://warehouse.org/language/2>
+    a              warehouse:Language ;
+    rdfs:label     "English" ;
+    warehouse:code "en" .
+
+<http://warehouse.org/language/3>
+    a              warehouse:Language ;
+    rdfs:label     "German" ;
+    warehouse:code "de" .
 
 # File Types
 
-<http://warehouse.org/type/1> a warehouse:Type ;
-	rdfs:label "CSV" ;
-  	warehouse:mime-type "text/plain" ;
-	warehouse:fileEnding "csv" .
-	
-<http://warehouse.org/type/2> a warehouse:Type ;
-	rdfs:label "XML" ;
-  	warehouse:content-type "application/xml" ;
-  	warehouse:mime-type "text/xml" ;
-	warehouse:fileEnding "xml" .
-	
-<http://warehouse.org/type/3> a warehouse:Type ;
-	rdfs:label "XLS" ;
-  	warehouse:mime-type "application/vnd.ms-excel" ;
-	warehouse:fileEnding "xls" .
+<http://warehouse.org/type/1>
+    a                    warehouse:Type ;
+    rdfs:label           "CSV" ;
+    warehouse:mime-type  "text/plain" ;
+    warehouse:fileEnding "csv" .
+
+<http://warehouse.org/type/2>
+    a                      warehouse:Type ;
+    rdfs:label             "XML" ;
+    warehouse:content-type "application/xml" ;
+    warehouse:mime-type    "text/xml" ;
+    warehouse:fileEnding   "xml" .
+
+<http://warehouse.org/type/3>
+    a                    warehouse:Type ;
+    rdfs:label           "XLS" ;
+    warehouse:mime-type  "application/vnd.ms-excel" ;
+    warehouse:fileEnding "xls" .
 
 # File charset-s
 
-<http://warehouse.org/charset/1> a warehouse:Charset ;
- 	rdfs:label "UTF-8" ;
- 	warehouse:charSet "utf-8" .
+<http://warehouse.org/charset/1>
+    a                 warehouse:Charset ;
+    rdfs:label        "UTF-8" ;
+    warehouse:charSet "utf-8" .
 
-<http://warehouse.org/charset/2> a warehouse:Charset ;
-	rdfs:label "ASCII" ;
- 	warehouse:charSet "us-ascii" ;
-	warehouse:charSet "ascii" .
+<http://warehouse.org/charset/2>
+    a                 warehouse:Charset ;
+    rdfs:label        "ASCII" ;
+    warehouse:charSet "us-ascii" ;
+    warehouse:charSet "ascii" .
 
-<http://warehouse.org/charset/3> a warehouse:Charset ;
-	rdfs:label "BINARY" ;
-	warehouse:charSet "binary" .
+<http://warehouse.org/charset/3>
+    a                 warehouse:Charset ;
+    rdfs:label        "BINARY" ;
+    warehouse:charSet "binary" .
 
-<http://warehouse.org/charset/4> a warehouse:Charset ;
-	rdfs:label "ISO-8859-1" ;
-	warehouse:charSet "iso-8859-1" .
+<http://warehouse.org/charset/4>
+    a                 warehouse:Charset ;
+    rdfs:label        "ISO-8859-1" ;
+    warehouse:charSet "iso-8859-1" .
 
 # ------ File columns for DPD supplier
 
-<http://warehouse.org/column/1> a warehouse:Column ;
-	rdfs:label "PARCELNO" ;
-	warehouse:columnType "NUMBER" .
-	
-<http://warehouse.org/column/2> a warehouse:Column ;
-	rdfs:label "SCAN_CODE" ;
-	warehouse:columnType "NUMBER" .
-	
-<http://warehouse.org/column/3> a warehouse:Column ;
-	rdfs:label "DEPOT_CODE" ;
-	warehouse:columnType "NUMBER" .
-	
-<http://warehouse.org/column/4> a warehouse:Column ;
-	rdfs:label "DEPOTNAME" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/5> a warehouse:Column ;
-	rdfs:label "EVENT_DATE_TIME" ;
-	warehouse:columnType "DATE" .
-	
-<http://warehouse.org/column/6> a warehouse:Column ;
-	rdfs:label "ROUTE" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/7> a warehouse:Column ;
-	rdfs:label "TOUR" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/8> a warehouse:Column ;
-	rdfs:label "PCODE" ;
-	warehouse:columnType "STRING" .
-	
+<http://warehouse.org/column/1>
+    a                    warehouse:Column ;
+    rdfs:label           "PARCELNO" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/2>
+    a                    warehouse:Column ;
+    rdfs:label           "SCAN_CODE" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/3>
+    a                    warehouse:Column ;
+    rdfs:label           "DEPOT_CODE" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/4>
+    a                    warehouse:Column ;
+    rdfs:label           "DEPOTNAME" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/5>
+    a                    warehouse:Column ;
+    rdfs:label           "EVENT_DATE_TIME" ;
+    warehouse:columnType "DATE" .
+
+<http://warehouse.org/column/6>
+    a                    warehouse:Column ;
+    rdfs:label           "ROUTE" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/7>
+    a                    warehouse:Column ;
+    rdfs:label           "TOUR" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/8>
+    a                    warehouse:Column ;
+    rdfs:label           "PCODE" ;
+    warehouse:columnType "STRING" .
+
 # ------ File columns for GLS supplier
-	
-<http://warehouse.org/column/9> a warehouse:Column ;
-	rdfs:label "CodFee" ;
-	warehouse:columnType "FLOAT" .
-	
-<http://warehouse.org/column/10> a warehouse:Column ;
-	rdfs:label "PU-Country" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/11> a warehouse:Column ;
-	rdfs:label "CreditCardFee" ;
-	warehouse:columnType "FLOAT" .
-	
-<http://warehouse.org/column/12> a warehouse:Column ;
-	rdfs:label "ManualLabelFee" ;
-	warehouse:columnType "FLOAT" .
-	
-<http://warehouse.org/column/13> a warehouse:Column ;
-	rdfs:label "Číslo balíka" ;
-	warehouse:columnType "NUMBER" .
-	
-<http://warehouse.org/column/14> a warehouse:Column ;
-	rdfs:label "Vyzdvihnutie" ;
-	warehouse:columnType "DATE" .
-	
-<http://warehouse.org/column/15> a warehouse:Column ;
-	rdfs:label "PSČ" ;
-	warehouse:columnType "NUMBER" .
-	
-<http://warehouse.org/column/16> a warehouse:Column ;
-	rdfs:label "SVFee" ;
-	warehouse:columnType "FLOAT" .
-	
+
+<http://warehouse.org/column/9>
+    a                    warehouse:Column ;
+    rdfs:label           "CodFee" ;
+    warehouse:columnType "FLOAT" .
+
+<http://warehouse.org/column/10>
+    a                    warehouse:Column ;
+    rdfs:label           "PU-Country" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/11>
+    a                    warehouse:Column ;
+    rdfs:label           "CreditCardFee" ;
+    warehouse:columnType "FLOAT" .
+
+<http://warehouse.org/column/12>
+    a                    warehouse:Column ;
+    rdfs:label           "ManualLabelFee" ;
+    warehouse:columnType "FLOAT" .
+
+<http://warehouse.org/column/13>
+    a                    warehouse:Column ;
+    rdfs:label           "Číslo balíka" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/14>
+    a                    warehouse:Column ;
+    rdfs:label           "Vyzdvihnutie" ;
+    warehouse:columnType "DATE" .
+
+<http://warehouse.org/column/15>
+    a                    warehouse:Column ;
+    rdfs:label           "PSČ" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/16>
+    a                    warehouse:Column ;
+    rdfs:label           "SVFee" ;
+    warehouse:columnType "FLOAT" .
+
 # ------ File columns for Heureka supplier
-	
-<http://warehouse.org/column/17> a warehouse:Column ;
-	rdfs:label "products" ;
-	warehouse:columnType "Object" .
-	
-<http://warehouse.org/column/18> a warehouse:Column ;
-	rdfs:label "product" ;
-	warehouse:columnType "Object" .
-	
-<http://warehouse.org/column/19> a warehouse:Column ;
-	rdfs:label "product_name" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/20> a warehouse:Column ;
-	rdfs:label "url" ;
-	warehouse:columnType "STRING" .
-	
-<http://warehouse.org/column/21> a warehouse:Column ;
-	rdfs:label "cena" ;
-	warehouse:columnType "FLOAT" .
+
+<http://warehouse.org/column/17>
+    a                    warehouse:Column ;
+    rdfs:label           "products" ;
+    warehouse:columnType "Object" .
+
+<http://warehouse.org/column/18>
+    a                    warehouse:Column ;
+    rdfs:label           "product" ;
+    warehouse:columnType "Object" .
+
+<http://warehouse.org/column/19>
+    a                    warehouse:Column ;
+    rdfs:label           "product_name" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/20>
+    a                    warehouse:Column ;
+    rdfs:label           "url" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/21>
+    a                    warehouse:Column ;
+    rdfs:label           "cena" ;
+    warehouse:columnType "FLOAT" .
