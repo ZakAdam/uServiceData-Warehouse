@@ -21,7 +21,8 @@ class PostsController < ApplicationController
     jid = params[:jid]
 
     file = File.open("./public/files/#{file_name}")
-    RestClient.post '172.17.0.1:4321/semantic/process', file_type: file_type, file: file, jid: jid
+    #RestClient.post '172.17.0.1:4321/semantic/process', file_type: file_type, file: file, jid: jid
+    RestClient.post '172.17.0.1:4321/apache-tika', file_type: file_type, file: file, jid: jid
     #RestClient.post 'processor:4567/gls_invoice/process', file_type: file_type, file: file, jid: jid
   end
 end

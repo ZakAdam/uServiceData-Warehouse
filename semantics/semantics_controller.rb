@@ -37,6 +37,15 @@ post '/semantic/process' do
   puts QueryDB.new.get_by_charset(result[2])
 end
 
+post '/apache-tika' do
+  response = RestClient.post 'localhost:9998/rmeta/form/text', :upload => params['file'][:tempfile]
+  file_data = JSON.parse(response)[0]
+
+  puts file_data.class
+
+  file_data.to_s
+end
+
 private
 
 # Later standalone service
@@ -61,18 +70,18 @@ post '/gls_invoice/process' do
 
   rows = file.parse(headers: true)
 
-  RestClient.post "saver:3000/transport_invoices/save", :file_type => params[:file_type], :file => transform, :docker_id => @docker_id, :jid => jid
+  RestClient.post 'saver:3000/transport_invoices/save', :file_type => params[:file_type], :file => transform, :docker_id => @docker_id, :jid => jid
 end
 
 post '/heureka_reviews/process' do
   parser = Nori.new
   parsed_reviews = parser.parse(params['reviews'])
 
-  RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
+  RestClient.post 'saver:3000/heureka_reviews/save', :reviews => parsed_reviews, :docker_id => @docker_id
 end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
 
-  RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
+  RestClient.post 'saver:3000/package_tracking/save', :trackings => data, :docker_id => @docker_id
 end
