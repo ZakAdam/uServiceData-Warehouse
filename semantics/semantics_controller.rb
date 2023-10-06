@@ -23,9 +23,6 @@ get '/' do
 end
 
 post '/semantic/process' do
-  puts 'RODO'
-  puts params
-  puts params['file']
   puts params['file'][:tempfile].path
   # This calls will be later split on standalone containers
   # 1. get file type
@@ -34,8 +31,13 @@ post '/semantic/process' do
 
   puts 'AWARE'
   result = file_endings(file.path)
-  puts result
-  puts QueryDB.new.get_by_charset(result[2])
+  headers = get_headers(file)
+  language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
+  #puts QueryDB.new.get_by_charset(result[2])
+
+  lel = QueryDB.new.get_by_four(result[0], result[1], result[2], language)
+  puts lel
+  lel
 end
 
 post '/apache-tika' do

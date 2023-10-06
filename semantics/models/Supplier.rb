@@ -8,6 +8,6 @@ class Supplier
   property :uri
 
   has_many :out, :columns, type: :ns0__fileElements
-  has_one :out, :types, type: :ns0__HAS_fileType
-  has_one :out, :charsets, type: :ns0__HAS_charSet
+  has_one :out, :type, type: :ns0__HAS_fileType
+  has_one :out, :charset, type: :ns0__HAS_charSet
 end

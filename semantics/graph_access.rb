@@ -31,4 +31,14 @@ class QueryDB
   def get_by_ending(file_ending)
     Type.find_by(ns0__fileEnding: file_ending).suppliers(:s).pluck(:s)
   end
+
+  def get_by_four(file_ending, file_type, charset, language)
+    puts file_ending, file_type, charset, language
+    Supplier.as(:n).query
+            .match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending, ns0__mimeType: $file_type})')
+            .match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
+            .optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
+            .params(file_ending: file_ending, file_type: file_type, charset: charset, language: language)
+            .pluck(:n)
+  end
 end

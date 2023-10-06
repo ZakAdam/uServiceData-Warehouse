@@ -64,21 +64,21 @@
 <http://warehouse.org/type/1>
     a                    warehouse:Type ;
     rdfs:label           "CSV" ;
-    warehouse:mime-type  "text/plain" ;
-    warehouse:fileEnding "csv" .
+    warehouse:mimeType   "text/plain" ;
+    warehouse:fileEnding ".csv" .
 
 <http://warehouse.org/type/2>
     a                      warehouse:Type ;
     rdfs:label             "XML" ;
-    warehouse:content-type "application/xml" ;
-    warehouse:mime-type    "text/xml" ;
-    warehouse:fileEnding   "xml" .
+    warehouse:contentType  "application/xml" ;
+    warehouse:mimeType     "text/xml" ;
+    warehouse:fileEnding   ".xml" .
 
 <http://warehouse.org/type/3>
     a                    warehouse:Type ;
     rdfs:label           "XLS" ;
-    warehouse:mime-type  "application/vnd.ms-excel" ;
-    warehouse:fileEnding "xls" .
+    warehouse:mimeType   "application/vnd.ms-excel" ;
+    warehouse:fileEnding ".xls" .
 
 # File charset-s
 
@@ -90,7 +90,7 @@
 <http://warehouse.org/charset/2>
     a                 warehouse:Charset ;
     rdfs:label        "ASCII" ;
-    warehouse:charSet "us-ascii" ;
+    #warehouse:charSet "us-ascii" ;
     warehouse:charSet "ascii" .
 
 <http://warehouse.org/charset/3>
