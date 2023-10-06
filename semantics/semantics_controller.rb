@@ -37,7 +37,7 @@ post '/semantic/process' do
 
   lel = QueryDB.new.get_by_four(result[0], result[1], result[2], language)
   puts lel
-  lel
+  lel.to_s
 end
 
 post '/apache-tika' do
@@ -84,7 +84,7 @@ end
 
 # Later standalone service
 def file_endings(file)
-  name_ending = File.extname(file)
+  name_ending = File.extname(file).delete_prefix('.')
   file_type = IO.popen(
     ['file', '--brief', '--mime-type', file],
     in: :close, err: :close
