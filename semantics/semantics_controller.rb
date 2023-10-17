@@ -1,13 +1,10 @@
-# processor.rb
+# semantics_controller.rb
 require 'sinatra'
-require 'smarter_csv'
-require 'roo-xls'
-require 'roo'
-require 'nori'
 require 'rest-client'
 require 'json'
-require 'nokogiri'
-require './graph_access.rb'
+#require './graph_access.rb'
+
+ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 
 before do
   #content_type :json
@@ -15,11 +12,7 @@ before do
 end
 
 get '/' do
-  #'Hello world!'
-
-  query = QueryDB.new.process('.xml', 'utf-8')
-
-  query
+  'Hello world!'
 end
 
 post '/semantic/process' do
@@ -33,13 +26,10 @@ post '/semantic/process' do
   result = file_endings(file.path)
   headers = get_headers(file)
   language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
-  #puts QueryDB.new.get_by_charset(result[2])
 
-  lel = QueryDB.new.get_by_four(result[0], result[1], result[2], language)
-  puts lel
-  #lel.to_s
+  supplier = get_by_four(result[0], result[1], result[2], language)
 
-  url = lel.first.endpoint.ns0__url
+  url = supplier.first.endpoint.ns0__url
   RestClient.post "processor:4567#{url}", file_type: result[1], file: File.open(file), jid: 0
 end
 
@@ -103,24 +93,12 @@ def file_endings(file)
   [name_ending, file_type, file_charset]
 end
 
-post '/gls_invoice/process' do
-  file = Roo::Spreadsheet.open(params['file'][:tempfile], extension: :xls)
-  jid = params[:jid]
-
-  rows = file.parse(headers: true)
-
-  RestClient.post 'saver:3000/transport_invoices/save', file_type: params[:file_type], file: transform, docker_id: @docker_id, jid:
-end
-
-post '/heureka_reviews/process' do
-  parser = Nori.new
-  parsed_reviews = parser.parse(params['reviews'])
-
-  RestClient.post 'saver:3000/heureka_reviews/save', reviews: parsed_reviews, docker_id: @docker_id
-end
-
-post '/dpd_invoice/process' do
-  data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
-
-  RestClient.post 'saver:3000/package_tracking/save', trackings: data, docker_id: @docker_id
+def get_by_four(file_ending, file_type, charset, language)
+  puts file_ending, file_type, charset, language
+  Supplier.as(:n).query
+          .match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending, ns0__mimeType: $file_type})')
+          .match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
+          .optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
+          .params(file_ending: file_ending, file_type: file_type, charset: charset, language: language)
+          .pluck(:n)
 end
