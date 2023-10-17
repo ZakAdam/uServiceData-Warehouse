@@ -7,6 +7,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/2> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/2> ;
     warehouse:fileElements <http://warehouse.org/column/17> ;
     warehouse:fileElements <http://warehouse.org/column/18> ;
     warehouse:fileElements <http://warehouse.org/column/19> ;
@@ -19,6 +20,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/3> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/3> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
     warehouse:fileElements <http://warehouse.org/column/16> ;
     warehouse:fileElements <http://warehouse.org/column/9> ;
     warehouse:fileElements <http://warehouse.org/column/10> ;
@@ -34,6 +36,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/1> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/2> ;
     warehouse:HAS_language <http://warehouse.org/language/3> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
     warehouse:fileElements <http://warehouse.org/column/1> ;
     warehouse:fileElements <http://warehouse.org/column/2> ;
     warehouse:fileElements <http://warehouse.org/column/3> ;
@@ -42,6 +45,27 @@
     warehouse:fileElements <http://warehouse.org/column/6> ;
     warehouse:fileElements <http://warehouse.org/column/7> ;
     warehouse:fileElements <http://warehouse.org/column/8> .
+
+# Endpoints
+<http://warehouse.org/endpoint/1>
+    a              warehouse:Endpoint ;
+    rdfs:label     "GLS endpoint" ;
+    warehouse:url  "/gls_invoice/process" ;
+    warehouse:method    "POST"  .
+
+# Endpoints
+<http://warehouse.org/endpoint/2>
+    a              warehouse:Endpoint ;
+    rdfs:label     "Heureka endpoint" ;
+    warehouse:url  "/heureka_reviews/process" ;
+    warehouse:method    "POST"  .
+
+# Endpoints
+<http://warehouse.org/endpoint/3>
+    a              warehouse:Endpoint ;
+    rdfs:label     "DPD endpoint" ;
+    warehouse:url  "/dpd_invoice/process" ;
+    warehouse:method    "POST"  .
 
 # Languages
 <http://warehouse.org/language/1>
