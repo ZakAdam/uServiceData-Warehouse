@@ -2,8 +2,13 @@
 require 'sinatra'
 require 'rest-client'
 require 'json'
+require 'active_graph'
+require 'neo4j-ruby-driver'
+Dir['./models/*.rb'].each { |file| require file }
+
 #require './graph_access.rb'
 
+# ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 
 before do
@@ -27,7 +32,8 @@ post '/semantic/process' do
   headers = get_headers(file)
   language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
 
-  supplier = get_by_four(result[0], result[1], result[2], language)
+  # supplier = get_by_four(result[0], result[1], result[2], language)
+  supplier = create_query(result[0], result[1], result[2], language)
 
   url = supplier.first.endpoint.ns0__url
   RestClient.post "processor:4567#{url}", file_type: result[1], file: File.open(file), jid: 0
@@ -101,4 +107,46 @@ def get_by_four(file_ending, file_type, charset, language)
           .optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
           .params(file_ending: file_ending, file_type: file_type, charset: charset, language: language)
           .pluck(:n)
+end
+
+def create_query(file_ending, file_type, charset, language)
+  puts "Testing for nil: #{file_ending.nil?}"
+  puts "Testing for empty: #{file_ending.empty?}"
+  puts file_ending, file_type, charset, language
+  query = Supplier.as(:n).query
+
+  # Define your parameters as a hash
+  parameters = {}
+
+  # Add a MATCH clause for file_ending if it is provided
+  unless file_ending.nil? || file_ending.empty?
+    query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})')
+    parameters[:file_ending] = file_ending
+  end
+
+  # Add a MATCH clause for file_type if it is provided
+  if file_type.nil? || file_type.empty?
+    query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})')
+    parameters[:file_type] = file_type
+  end
+
+  # Add a MATCH clause for charset if it is provided
+  if charset.nil? || charset.empty?
+    query = query.match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
+    parameters[:charset] = charset
+  end
+
+  # Add an OPTIONAL MATCH clause for language if it is provided
+  if language.nil? || language.empty?
+    query = query.optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
+    parameters[:language] = language
+  end
+
+  # Set the parameters for the query
+  query = query.params(parameters)
+
+  print query.to_cypher
+
+  # Finally, pluck the result
+  query.pluck(:n)
 end
