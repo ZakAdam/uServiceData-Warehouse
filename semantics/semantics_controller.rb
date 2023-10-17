@@ -37,7 +37,10 @@ post '/semantic/process' do
 
   lel = QueryDB.new.get_by_four(result[0], result[1], result[2], language)
   puts lel
-  lel.to_s
+  #lel.to_s
+
+  url = lel.first.endpoint.ns0__url
+  RestClient.post "processor:4567#{url}", file_type: result[1], file: file, jid: 0
 end
 
 post '/apache-tika' do
