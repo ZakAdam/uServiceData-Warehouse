@@ -114,8 +114,8 @@
 <http://warehouse.org/charset/2>
     a                 warehouse:Charset ;
     rdfs:label        "ASCII" ;
-    #warehouse:charSet "us-ascii" ;
-    warehouse:charSet "ascii" .
+    warehouse:charSet "us-ascii" .
+    #warehouse:charSet "ascii" .
 
 <http://warehouse.org/charset/3>
     a                 warehouse:Charset ;

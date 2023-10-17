@@ -40,7 +40,7 @@ post '/semantic/process' do
   #lel.to_s
 
   url = lel.first.endpoint.ns0__url
-  RestClient.post "processor:4567#{url}", file_type: result[1], file: file, jid: 0
+  RestClient.post "processor:4567#{url}", file_type: result[1], file: File.open(file), jid: 0
 end
 
 post '/apache-tika' do
@@ -56,8 +56,10 @@ private
 def get_headers(file)
   # testing file
   # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
-  response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
+  response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
+  # response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
   file_data = JSON.parse(response)[0]
+
   header_row = nil
 
   if ['application/xml'].include?(file_data['Content-Type'])
@@ -72,14 +74,14 @@ def get_headers(file)
         break
       end
     end
-
-    puts header_row
-    header_row
   end
+
+  #puts header_row
+  header_row
 end
 
 def get_language(headers)
-  language = RestClient.put('localhost:9998/language/stream', headers:)
+  language = RestClient.put('apach-tika:9998/language/stream', headers:)
 
   puts "Language for the file is: #{language}"
   language

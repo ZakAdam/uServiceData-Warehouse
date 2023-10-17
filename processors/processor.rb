@@ -53,7 +53,11 @@ end
 
 post '/heureka_reviews/process' do
   parser = Nori.new
-  parsed_reviews = parser.parse(params['reviews'])
+  parsed_reviews = if params.key?(:file)
+                     parser.parse(params['file'][:tempfile].read)
+                   else
+                     parser.parse(params['reviews'])
+                   end
 
   RestClient.post "saver:3000/heureka_reviews/save", :reviews => parsed_reviews, :docker_id => @docker_id
 end
