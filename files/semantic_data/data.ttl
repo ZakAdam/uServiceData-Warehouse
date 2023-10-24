@@ -36,7 +36,10 @@
     warehouse:HAS_fileType <http://warehouse.org/type/1> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/2> ;
     warehouse:HAS_language <http://warehouse.org/language/3> ;
-    warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
+    warehouse:HAS_condition [warehouse:condition "sk" ;
+                             warehouse:rel_name "keep_country" ; ] <http://warehouse.org/endpoint/3> ;
+    warehouse:HAS_condition [warehouse:condition "true" ;
+                             warehouse:rel_name "keep_country" ; ] <http://warehouse.org/endpoint/3> ;
     warehouse:fileElements <http://warehouse.org/column/1> ;
     warehouse:fileElements <http://warehouse.org/column/2> ;
     warehouse:fileElements <http://warehouse.org/column/3> ;
