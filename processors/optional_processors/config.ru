@@ -1,3 +1,3 @@
-require '../optional_processor'
+require './optional_processor'
 
 run Sinatra::Application

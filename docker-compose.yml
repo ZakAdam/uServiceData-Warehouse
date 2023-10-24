@@ -24,7 +24,8 @@ services:
   saver:
     build: savers/.
     ports:
-        - "3950-4000:3000"
+        #- "3950-4000:3000"
+      - "4000:3000"
     privileged: true
     environment:
       - POSTGRES_HOST=172.17.0.1

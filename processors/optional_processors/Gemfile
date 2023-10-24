@@ -11,6 +11,10 @@ gem 'reel'
 gem 'http'
 gem 'webrick'
 
+gem 'activesupport', '~> 7.0', '<= 7.0.8'
+gem 'activegraph', '>= 10.0.0'
+gem 'neo4j-ruby-driver'
+
 gem 'rest-client'
 gem 'dotenv'
 

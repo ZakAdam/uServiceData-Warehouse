@@ -9,6 +9,6 @@ class Supplier
 
   has_many :out, :columns, type: :ns0__fileElements
   has_one :out, :type, type: :ns0__HAS_fileType
-  has_one :out, :endpoint, type: :ns0__HAS_endpoint
+  has_many :out, :endpoints, type: :ns0__HAS_endpoint
   has_one :out, :charset, type: :ns0__HAS_charSet
 end
