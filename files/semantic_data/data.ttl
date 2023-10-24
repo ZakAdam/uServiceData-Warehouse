@@ -21,6 +21,7 @@
     warehouse:HAS_charSet  <http://warehouse.org/charset/3> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/4> ;
     warehouse:fileElements <http://warehouse.org/column/16> ;
     warehouse:fileElements <http://warehouse.org/column/9> ;
     warehouse:fileElements <http://warehouse.org/column/10> ;
@@ -36,10 +37,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/1> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/2> ;
     warehouse:HAS_language <http://warehouse.org/language/3> ;
-    warehouse:HAS_condition [warehouse:condition "sk" ;
-                             warehouse:rel_name "keep_country" ; ] <http://warehouse.org/endpoint/3> ;
-    warehouse:HAS_condition [warehouse:condition "true" ;
-                             warehouse:rel_name "keep_country" ; ] <http://warehouse.org/endpoint/3> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
     warehouse:fileElements <http://warehouse.org/column/1> ;
     warehouse:fileElements <http://warehouse.org/column/2> ;
     warehouse:fileElements <http://warehouse.org/column/3> ;
@@ -56,19 +54,33 @@
     warehouse:url  "/gls_invoice/process" ;
     warehouse:method    "POST"  .
 
-# Endpoints
 <http://warehouse.org/endpoint/2>
     a              warehouse:Endpoint ;
     rdfs:label     "Heureka endpoint" ;
     warehouse:url  "/heureka_reviews/process" ;
     warehouse:method    "POST"  .
 
-# Endpoints
 <http://warehouse.org/endpoint/3>
     a              warehouse:Endpoint ;
     rdfs:label     "DPD endpoint" ;
     warehouse:url  "/dpd_invoice/process" ;
     warehouse:method    "POST"  .
+
+<http://warehouse.org/endpoint/4>
+    a              warehouse:Endpoint ;
+    rdfs:label     "Keep location" ;
+    warehouse:url  "optional_processor:4444/geo_location/keep_country" ;
+    warehouse:method    "POST"  ;
+    warehouse:condition "keep_location" ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/5> .
+
+<http://warehouse.org/endpoint/5>
+    a              warehouse:Endpoint ;
+    rdfs:label     "Send Email Report" ;
+    warehouse:url  "optional_processor:4444/notifications/send_email" ;
+    warehouse:method    "POST"  ;
+    warehouse:condition "keep_location" ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> .
 
 # Languages
 <http://warehouse.org/language/1>
