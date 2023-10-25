@@ -6,10 +6,8 @@ require 'active_graph'
 require 'neo4j-ruby-driver'
 Dir['./models/*.rb'].each { |file| require file }
 
-#require './graph_access.rb'
-
-# ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
-ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
+ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
+# ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 
 before do
   #content_type :json
@@ -148,10 +146,10 @@ def get_all_possible_paths(entrypoints)
 end
 
 def print_workflow(nodes)
-  puts '                                  | GENERATED WORKFLOW PIPELINE |'
+  puts '                                  | GENERATED WORKFLOW PIPELINE/S |'
   puts '---------------------------------------------------------------------------------------------------------------'
-  nodes.each_key do |node|
-    print "(#{node})--->"
+  nodes.each do |node|
+    print "(#{node.rdfs__label})--->"
   end
   puts '(Saver)'
   puts '---------------------------------------------------------------------------------------------------------------'
@@ -202,4 +200,32 @@ def create_query(file_ending, file_type, charset, language, condition)
 
   # Finally, pluck the result
   query.pluck(:n)
+end
+
+# Define a lambda function for the recursive traversal
+traverse = lambda do |node, current_path, paths|
+  puts node
+  current_path.push(node)
+  if node.endpoints.empty?
+    puts 'END travers'
+    paths.push(current_path.dup)
+  else
+    node.endpoints.each do |endpoint|
+      puts "Neighbor found: #{endpoint}"
+      traverse.call(endpoint, current_path, paths)
+    end
+  end
+  current_path.pop
+end
+
+# Define a method to find all possible paths
+def find_all_paths(start_node, traverse_lambda)
+  paths = []
+  current_path = []
+  traverse_lambda.call(start_node, current_path, paths)
+  paths
+
+  paths.each do |path|
+    print_workflow(path)
+  end
 end
