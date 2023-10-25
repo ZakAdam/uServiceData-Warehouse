@@ -9,6 +9,19 @@ Dir['./models/*.rb'].each { |file| require file }
 ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 # ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 
+# Define a lambda function for the recursive traversal
+traverse = lambda do |node, current_path, paths|
+  current_path.push(node)
+  if node.endpoints.empty?
+    paths.push(current_path.dup)
+  else
+    node.endpoints.each do |endpoint|
+      traverse.call(endpoint, current_path, paths)
+    end
+  end
+  current_path.pop
+end
+
 before do
   #content_type :json
   @docker_id = `cat /etc/hostname`
@@ -20,29 +33,33 @@ end
 
 post '/semantic/process' do
   puts params['file'][:tempfile].path
+  puts '-------------------'
+  puts params
   # This calls will be later split on standalone containers
   # 1. get file type
   file = params['file'][:tempfile]
-  condition = params['condition']
+  condition = params['conditions']
 
   result = file_endings(file.path)
   headers = get_headers(file)
-  language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
+  language = get_language(headers.gsub(/[,|;\t_]/, ' ')) #/[,|;\t]/
 
   ########## Get one supplier, as final answer
   # supplier = get_by_four(result[0], result[1], result[2], language)
-  supplier = create_query(result[0], result[1], result[2], language, condition)
+  supplier = create_query(result[0], result[1], result[2], language, condition).first
 
   ########## Create correct workflow
-  #url = supplier.first.endpoint.ns0__url
-  url = get_all_possible_paths(supplier.first.id)
+  url = supplier.endpoints.first.ns0__url
 
-  RestClient.post url.to_s, file_type: result[1], file: File.open(file), node_id: supplier.first.endpoint.id
+  paths = find_all_paths(supplier, traverse)
+  get_path_conditions(paths, condition.split(', '))
+  puts paths.size
+  #RestClient.post url.to_s, file_type: result[1], file: File.open(file), node_id: supplier.first.endpoint.id
 end
 
 post '/apache-tika' do
   headers = get_headers(params['file'][:tempfile])
-  language = get_language(headers.gsub(/[,|;\t_]/, ' '))    #/[,|;\t]/
+  language = get_language(headers.gsub(/[,|;\t_]/, ' ')) #/[,|;\t]/
 
   puts language, headers
   headers
@@ -53,32 +70,33 @@ private
 def get_headers(file)
   # testing file
   # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
-  response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
-  # response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
-  file_data = JSON.parse(response)[0]
+  #response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
+   response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
+   file_data = JSON.parse(response)[0]
 
-  header_row = nil
+   header_row = nil
 
-  if ['application/xml'].include?(file_data['Content-Type'])
-    # parse specific file types, such as XML
-    doc = File.open(file) { |f| Nokogiri::XML(f) }
-    header_row = doc.search('*').map(&:name).uniq.join(' ')
-  else
-    rows = file_data['X-TIKA:content'].split("\n")
-    rows.each do |line|
-      if line.strip != '' && !line.strip.match(/^Client_\d+_Inv/)
-        header_row = line
-        break
-      end
-    end
-  end
+   if ['application/xml'].include?(file_data['Content-Type'])
+     # parse specific file types, such as XML
+     doc = File.open(file) { |f| Nokogiri::XML(f) }
+     header_row = doc.search('*').map(&:name).uniq.join(' ')
+   else
+     rows = file_data['X-TIKA:content'].split("\n")
+     rows.each do |line|
+       if line.strip != '' && !line.strip.match(/^Client_\d+_Inv/)
+         header_row = line
+         break
+       end
+     end
+   end
 
   #puts header_row
-  header_row
+   header_row
 end
 
 def get_language(headers)
-  language = RestClient.put('apach-tika:9998/language/stream', headers:)
+  language = RestClient.put('localhost:9998/language/stream', headers:)
+  #language = RestClient.put('apach-tika:9998/language/stream', headers:)
 
   puts "Language for the file is: #{language}"
   language
@@ -126,10 +144,10 @@ def get_all_possible_paths(entrypoints)
     response.each do |node|
       puts node.rdfs__label
       required_conditions[label][node.rdfs__label] = if node.ns0__condition.nil?
-                                                [true, node.ns0__url]
-                                              else
-                                                [node.ns0__condition, node.ns0__url]
-                                              end
+                                                        [true, node.ns0__url]
+                                                      else
+                                                        [node.ns0__condition, node.ns0__url]
+                                                      end
     end
   end
 
@@ -202,30 +220,43 @@ def create_query(file_ending, file_type, charset, language, condition)
   query.pluck(:n)
 end
 
-# Define a lambda function for the recursive traversal
-traverse = lambda do |node, current_path, paths|
-  puts node
-  current_path.push(node)
-  if node.endpoints.empty?
-    puts 'END travers'
-    paths.push(current_path.dup)
-  else
-    node.endpoints.each do |endpoint|
-      puts "Neighbor found: #{endpoint}"
-      traverse.call(endpoint, current_path, paths)
-    end
-  end
-  current_path.pop
-end
-
 # Define a method to find all possible paths
 def find_all_paths(start_node, traverse_lambda)
   paths = []
   current_path = []
   traverse_lambda.call(start_node, current_path, paths)
-  paths
 
   paths.each do |path|
     print_workflow(path)
   end
+
+  paths
+end
+
+def get_path_conditions(paths, request_conditions)
+  conditions = []
+  paths.each do |path|
+    path_conditions = []
+    path.each do |node|
+      path_conditions << node.ns0__condition if node.respond_to?(:ns0__condition) && !node.ns0__condition.nil?
+    end
+
+    conditions << path_conditions
+  end
+
+  conditions.each_with_index do |path_conditions, index|
+    next if path_conditions.empty?
+
+    hits = 0
+    request_conditions.each do |req_cond|
+      hits += 1 if path_conditions.include?(req_cond)
+    end
+
+    puts "Number of hits for #{index} path: #{hits}"
+    puts "Percentage precision for pipeline: #{(hits.to_f / path_conditions.size) * 100}%"
+    puts '-------------------------------------------------------------------'
+  end
+
+  print conditions
+  conditions
 end
