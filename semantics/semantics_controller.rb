@@ -2,25 +2,7 @@
 require 'sinatra'
 require 'rest-client'
 require 'json'
-require 'active_graph'
-require 'neo4j-ruby-driver'
-Dir['./models/*.rb'].each { |file| require file }
-
-ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
-# ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
-
-# Define a lambda function for the recursive traversal
-traverse = lambda do |node, current_path, paths|
-  current_path.push(node)
-  if node.endpoints.empty?
-    paths.push(current_path.dup)
-  else
-    node.endpoints.each do |endpoint|
-      traverse.call(endpoint, current_path, paths)
-    end
-  end
-  current_path.pop
-end
+load './graph_manager.rb'
 
 before do
   #content_type :json
@@ -49,12 +31,17 @@ post '/semantic/process' do
   supplier = create_query(result[0], result[1], result[2], language, condition).first
 
   ########## Create correct workflow
-  url = supplier.endpoints.first.ns0__url
+  #url = supplier.endpoints.first.ns0__url
 
-  paths = find_all_paths(supplier, traverse)
-  get_path_conditions(paths, condition.split(', '))
-  puts paths.size
-  #RestClient.post url.to_s, file_type: result[1], file: File.open(file), node_id: supplier.first.endpoint.id
+  paths = find_all_paths(supplier)
+  best_path = get_path_conditions(paths, condition.split(', '))
+  urls = get_urls(best_path)
+
+  RestClient.post urls[0].to_s,
+                  file_type: result[1],
+                  file: File.open(file),
+                  urls: urls,
+                  url_index: 1
 end
 
 post '/apache-tika' do
@@ -128,51 +115,6 @@ def get_by_four(file_ending, file_type, charset, language)
           .pluck(:n)
 end
 
-def get_all_possible_paths(entrypoints)
-  required_conditions = {}
-
-  # query = "MATCH (e:ns0__Endpoint)-[:ns0__HAS_endpoint*]->(children:ns0__Endpoint)
-  #         WHERE e.rdfs__label = $label
-  #         RETURN collect(e) + collect(children) AS nodes"
-
-  #  response = ActiveGraph::Base.query(query, label: label)
-
-  entrypoints.each do |label|
-    response = Endpoint.find_by(rdfs__label: label).endpoints(rel_length: { min: 0 })
-
-    required_conditions[label] = {}
-    response.each do |node|
-      puts node.rdfs__label
-      required_conditions[label][node.rdfs__label] = if node.ns0__condition.nil?
-                                                        [true, node.ns0__url]
-                                                      else
-                                                        [node.ns0__condition, node.ns0__url]
-                                                      end
-    end
-  end
-
-  #  response.first.values.first.each do |node|
-  #  puts node.rdfs__label
-  #  required_conditions[node.rdfs__label] = if node.ns0__condition.nil?
-  #                                            [true, node.ns0__url]
-  #                                          else
-  #                                            [node.ns0__condition, node.ns0__url]
-  #                                          end
-  #end
-
-  required_conditions
-end
-
-def print_workflow(nodes)
-  puts '                                  | GENERATED WORKFLOW PIPELINE/S |'
-  puts '---------------------------------------------------------------------------------------------------------------'
-  nodes.each do |node|
-    print "(#{node.rdfs__label})--->"
-  end
-  puts '(Saver)'
-  puts '---------------------------------------------------------------------------------------------------------------'
-end
-
 def create_query(file_ending, file_type, charset, language, condition)
   puts "Testing for nil: #{file_ending.nil?}"
   puts "Testing for empty: #{file_ending.empty?}"
@@ -218,45 +160,4 @@ def create_query(file_ending, file_type, charset, language, condition)
 
   # Finally, pluck the result
   query.pluck(:n)
-end
-
-# Define a method to find all possible paths
-def find_all_paths(start_node, traverse_lambda)
-  paths = []
-  current_path = []
-  traverse_lambda.call(start_node, current_path, paths)
-
-  paths.each do |path|
-    print_workflow(path)
-  end
-
-  paths
-end
-
-def get_path_conditions(paths, request_conditions)
-  conditions = []
-  paths.each do |path|
-    path_conditions = []
-    path.each do |node|
-      path_conditions << node.ns0__condition if node.respond_to?(:ns0__condition) && !node.ns0__condition.nil?
-    end
-
-    conditions << path_conditions
-  end
-
-  conditions.each_with_index do |path_conditions, index|
-    next if path_conditions.empty?
-
-    hits = 0
-    request_conditions.each do |req_cond|
-      hits += 1 if path_conditions.include?(req_cond)
-    end
-
-    puts "Number of hits for #{index} path: #{hits}"
-    puts "Percentage precision for pipeline: #{(hits.to_f / path_conditions.size) * 100}%"
-    puts '-------------------------------------------------------------------'
-  end
-
-  print conditions
-  conditions
 end
