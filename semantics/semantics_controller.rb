@@ -28,7 +28,7 @@ post '/semantic/process' do
 
   ########## Get one supplier, as final answer
   # supplier = get_by_four(result[0], result[1], result[2], language)
-  supplier = create_query(result[0], result[1], result[2], language, condition).first
+  supplier = create_query(result[0], result[1], result[2], language, headers).first
 
   ########## Create correct workflow
   #url = supplier.endpoints.first.ns0__url
@@ -115,42 +115,52 @@ def get_by_four(file_ending, file_type, charset, language)
           .pluck(:n)
 end
 
-def create_query(file_ending, file_type, charset, language, condition)
-  puts "Testing for nil: #{file_ending.nil?}"
-  puts "Testing for empty: #{file_ending.empty?}"
-  puts file_ending, file_type, charset, language
+def create_query(file_ending, file_type, charset, language, headers)
+  puts file_ending, file_type, charset, language,
   query = Supplier.as(:n).query
 
   # Define your parameters as a hash
   parameters = {}
 
-  # Add a MATCH clause for file_ending if it is provided
-  unless file_ending.nil? || file_ending.empty?
-    query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})')
-    parameters[:file_ending] = file_ending
-  end
+  # REMOVED bcs headings doesnt work otherwise :) ALSO file_ending shouldn't be required options, as it can be false
+  # unless file_ending.nil? || file_ending.empty?
+  #   query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})')
+  #   parameters[:file_ending] = file_ending
+  # end
 
   # Add a MATCH clause for file_type if it is provided
-  if file_type.nil? || file_type.empty?
+  unless file_type.nil? || file_type.empty?
     query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})')
     parameters[:file_type] = file_type
   end
 
   # Add a MATCH clause for charset if it is provided
-  if charset.nil? || charset.empty?
+  unless charset.nil? || charset.empty?
     query = query.match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
     parameters[:charset] = charset
   end
 
   # Add an OPTIONAL MATCH clause for language if it is provided
-  if language.nil? || language.empty?
+  unless language.nil? || language.empty?
     query = query.optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
     parameters[:language] = language
   end
 
-  if condition.nil? || condition.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_condition]->(:ns0__Endpoint {ns0__condition: $condition})')
-    parameters[:condition] = condition
+  unless headers.nil? || headers.empty?
+    max_headers = 5
+    headers.split("\t").each_with_index do |header, index|
+      next if header.empty?
+
+      puts header
+      puts '-----MORE====='
+      #query = query.optional_match('(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header})')
+      #parameters[:header] = header
+      query = query.optional_match("(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})")
+      parameters["header_#{index}".to_sym] = header
+      #parameters[:header_1] = 'Číslo balíka'
+
+      break if index > max_headers
+    end
   end
 
   # Set the parameters for the query
