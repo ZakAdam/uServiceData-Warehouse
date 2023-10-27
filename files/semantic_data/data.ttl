@@ -7,7 +7,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/2> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
-    warehouse:HAS_endpoint <http://warehouse.org/endpoint/2> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
     warehouse:fileElements <http://warehouse.org/column/17> ;
     warehouse:fileElements <http://warehouse.org/column/18> ;
     warehouse:fileElements <http://warehouse.org/column/19> ;
@@ -20,7 +20,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/3> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/3> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
-    warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
+    #warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/4> ;
     warehouse:fileElements <http://warehouse.org/column/16> ;
     warehouse:fileElements <http://warehouse.org/column/9> ;
@@ -37,7 +37,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/1> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/2> ;
     warehouse:HAS_language <http://warehouse.org/language/3> ;
-    warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/4> ;
     warehouse:fileElements <http://warehouse.org/column/1> ;
     warehouse:fileElements <http://warehouse.org/column/2> ;
     warehouse:fileElements <http://warehouse.org/column/3> ;
@@ -53,7 +53,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/1> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
     warehouse:HAS_language <http://warehouse.org/language/1> ;
-    #warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
     warehouse:fileElements <http://warehouse.org/column/15> ;   # PSC
     warehouse:fileElements <http://warehouse.org/column/22> ;
     warehouse:fileElements <http://warehouse.org/column/23> ;
@@ -65,24 +65,43 @@
     warehouse:fileElements <http://warehouse.org/column/29> ;
     warehouse:fileElements <http://warehouse.org/column/30> .
 
+<http://warehouse.org/id/5>
+    a                      warehouse:Supplier ;
+    rdfs:label             "DHL" ;
+    warehouse:HAS_fileType <http://warehouse.org/type/1> ;
+    warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
+    warehouse:HAS_language <http://warehouse.org/language/2> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/5> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
+    warehouse:fileElements <http://warehouse.org/column/31> ;   # PSC
+    warehouse:fileElements <http://warehouse.org/column/32> ;
+    warehouse:fileElements <http://warehouse.org/column/33> ;
+    warehouse:fileElements <http://warehouse.org/column/34> ;
+    warehouse:fileElements <http://warehouse.org/column/35> ;
+    warehouse:fileElements <http://warehouse.org/column/36> ;
+    warehouse:fileElements <http://warehouse.org/column/37> .
+
 # Endpoints
 <http://warehouse.org/endpoint/1>
     a              warehouse:Endpoint ;
     rdfs:label     "GLS endpoint" ;
     #warehouse:url  "processor:4567/gls_invoice/process" ;
     warehouse:url  "localhost:4567/gls_invoice/process" ;
+    warehouse:condition "gls" ;
     warehouse:method    "POST"  .
 
 <http://warehouse.org/endpoint/2>
     a              warehouse:Endpoint ;
     rdfs:label     "Heureka endpoint" ;
-    warehouse:url  "/heureka_reviews/process" ;
+    warehouse:url  "localhost:4567/heureka_reviews/process" ;
+    warehouse:condition "heureka" ;
     warehouse:method    "POST"  .
 
 <http://warehouse.org/endpoint/3>
     a              warehouse:Endpoint ;
     rdfs:label     "DPD endpoint" ;
-    warehouse:url  "/dpd_invoice/process" ;
+    warehouse:url  "localhost:4567/dpd_invoice/process" ;
+    warehouse:condition "dpd" ;
     warehouse:method    "POST"  .
 
 <http://warehouse.org/endpoint/4>
@@ -102,6 +121,8 @@
     warehouse:method    "POST"  ;
     warehouse:condition "send_email" ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/7> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> .
 
 <http://warehouse.org/endpoint/6>
@@ -111,7 +132,26 @@
     warehouse:url  "localhost:4444/cron/schedule" ;
     warehouse:method    "POST"  ;
     warehouse:condition "schedule_cron" ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/7> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/8> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/2> ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> .
+
+<http://warehouse.org/endpoint/7>
+    a              warehouse:Endpoint ;
+    rdfs:label     "DHL endpoint" ;
+    #warehouse:url  "optional_processor:4444/notifications/send_email" ;
+    warehouse:url  "localhost:4567/dhl/process" ;
+    warehouse:condition "dhl" ;
+    warehouse:method    "POST"  .
+
+<http://warehouse.org/endpoint/8>
+    a              warehouse:Endpoint ;
+    rdfs:label     "GEIS endpoint" ;
+    #warehouse:url  "optional_processor:4444/notifications/send_email" ;
+    warehouse:url  "localhost:4567/geis/process" ;
+    warehouse:condition "geis" ;
+    warehouse:method    "POST"  .
 
 # Languages
 <http://warehouse.org/language/1>
@@ -329,3 +369,39 @@
     a                    warehouse:Column ;
     rdfs:label           "Počet kusov" ;
     warehouse:columnType "NUMBER" .
+
+# DHL columns
+<http://warehouse.org/column/31>
+    a                    warehouse:Column ;
+    rdfs:label           "Invoice Number" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/32>
+    a                    warehouse:Column ;
+    rdfs:label           "Billing Account Name" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/33>
+    a                    warehouse:Column ;
+    rdfs:label           "Invoice Identifier" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/34>
+    a                    warehouse:Column ;
+    rdfs:label           "Billing Account" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/35>
+    a                    warehouse:Column ;
+    rdfs:label           "Receivers Name" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/36>
+    a                    warehouse:Column ;
+    rdfs:label           "Currency" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/37>
+    a                    warehouse:Column ;
+    rdfs:label           "Total Tax" ;
+    warehouse:columnType "FLOAT" .
