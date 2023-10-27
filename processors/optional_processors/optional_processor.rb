@@ -40,3 +40,17 @@ post '/notifications/send_email' do
                   urls: params[:urls],
                   url_index: params[:url_index].to_i + 1
 end
+
+post '/cron/schedule' do
+  puts 'Creating CORN job...'
+  puts 'Scheduling job...'
+
+  # Query file_type by id, to get country?
+
+  RestClient.post params[:urls][params[:url_index].to_i],
+                  file_type: params[:file_type],
+                  file: params[:file],
+                  docker_id: @docker_id,
+                  urls: params[:urls],
+                  url_index: params[:url_index].to_i + 1
+end

@@ -47,6 +47,24 @@
     warehouse:fileElements <http://warehouse.org/column/7> ;
     warehouse:fileElements <http://warehouse.org/column/8> .
 
+<http://warehouse.org/id/4>
+    a                      warehouse:Supplier ;
+    rdfs:label             "GEIS" ;
+    warehouse:HAS_fileType <http://warehouse.org/type/1> ;
+    warehouse:HAS_charSet  <http://warehouse.org/charset/1> ;
+    warehouse:HAS_language <http://warehouse.org/language/1> ;
+    #warehouse:HAS_endpoint <http://warehouse.org/endpoint/3> ;
+    warehouse:fileElements <http://warehouse.org/column/15> ;   # PSC
+    warehouse:fileElements <http://warehouse.org/column/22> ;
+    warehouse:fileElements <http://warehouse.org/column/23> ;
+    warehouse:fileElements <http://warehouse.org/column/24> ;
+    warehouse:fileElements <http://warehouse.org/column/25> ;
+    warehouse:fileElements <http://warehouse.org/column/26> ;
+    warehouse:fileElements <http://warehouse.org/column/27> ;
+    warehouse:fileElements <http://warehouse.org/column/28> ;
+    warehouse:fileElements <http://warehouse.org/column/29> ;
+    warehouse:fileElements <http://warehouse.org/column/30> .
+
 # Endpoints
 <http://warehouse.org/endpoint/1>
     a              warehouse:Endpoint ;
@@ -83,6 +101,16 @@
     warehouse:url  "localhost:4444/notifications/send_email" ;
     warehouse:method    "POST"  ;
     warehouse:condition "send_email" ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
+    warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> .
+
+<http://warehouse.org/endpoint/6>
+    a              warehouse:Endpoint ;
+    rdfs:label     "Schedule CRON job" ;
+    #warehouse:url  "optional_processor:4444/notifications/send_email" ;
+    warehouse:url  "localhost:4444/cron/schedule" ;
+    warehouse:method    "POST"  ;
+    warehouse:condition "schedule_cron" ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> .
 
 # Languages
@@ -255,3 +283,49 @@
     a                    warehouse:Column ;
     rdfs:label           "cena" ;
     warehouse:columnType "FLOAT" .
+
+# GEIS columns
+<http://warehouse.org/column/22>
+    a                    warehouse:Column ;
+    rdfs:label           "Číslo zásielky" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/23>
+    a                    warehouse:Column ;
+    rdfs:label           "PK" ;
+    warehouse:columnType "NUMBER" .
+
+<http://warehouse.org/column/24>
+    a                    warehouse:Column ;
+    rdfs:label           "Dátum odoslania" ;
+    warehouse:columnType "DATE" .
+
+<http://warehouse.org/column/25>
+    a                    warehouse:Column ;
+    rdfs:label           "Odosielateľ" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/26>
+    a                    warehouse:Column ;
+    rdfs:label           "Adresa" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/27>
+    a                    warehouse:Column ;
+    rdfs:label           "Mesto" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/28>
+    a                    warehouse:Column ;
+    rdfs:label           "Štát" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/29>
+    a                    warehouse:Column ;
+    rdfs:label           "Príjemca" ;
+    warehouse:columnType "STRING" .
+
+<http://warehouse.org/column/30>
+    a                    warehouse:Column ;
+    rdfs:label           "Počet kusov" ;
+    warehouse:columnType "NUMBER" .
