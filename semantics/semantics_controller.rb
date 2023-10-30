@@ -3,6 +3,7 @@ require 'sinatra'
 require 'rest-client'
 require 'json'
 load './graph_manager.rb'
+load 'tags/tags_manager.rb'
 
 before do
   #content_type :json
@@ -26,6 +27,12 @@ post '/semantic/process' do
   headers = get_headers(file)
   language = get_language(headers.gsub(/[,|;\t_]/, ' ')) #/[,|;\t]/
 
+  # split headers
+  delimiters = /\t|,|;|\n/
+  headers = headers.split(delimiters).reject!(&:empty?)
+
+  thread = Thread.new { get_supplier_by_tags(result[0], result[1], result[2], language, headers) }
+
   ########## Get one supplier, as final answer
   # supplier = get_by_four(result[0], result[1], result[2], language)
   supplier = create_query(result[0], result[1], result[2], language, headers).first
@@ -37,11 +44,13 @@ post '/semantic/process' do
   best_path = get_path_conditions(paths, condition.split(', '))
   urls = get_urls(best_path)
 
+=begin
   RestClient.post urls[0].to_s,
                   file_type: result[1],
                   file: File.open(file),
                   urls: urls,
                   url_index: 1
+=end
 end
 
 post '/apache-tika' do
@@ -57,28 +66,27 @@ private
 def get_headers(file)
   # testing file
   # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
-  #response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
-   response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
-   file_data = JSON.parse(response)[0]
+  # response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
+  response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
+  file_data = JSON.parse(response)[0]
 
-   header_row = nil
+  header_row = nil
 
-   if ['application/xml'].include?(file_data['Content-Type'])
-     # parse specific file types, such as XML
-     doc = File.open(file) { |f| Nokogiri::XML(f) }
-     header_row = doc.search('*').map(&:name).uniq.join(' ')
-   else
-     rows = file_data['X-TIKA:content'].split("\n")
-     rows.each do |line|
-       if line.strip != '' && !line.strip.match(/^Client_\d+_Inv/)
-         header_row = line
-         break
-       end
-     end
-   end
+  if ['application/xml'].include?(file_data['Content-Type'])
+    # parse specific file types, such as XML
+    doc = File.open(file) { |f| Nokogiri::XML(f) }
+    header_row = doc.search('*').map(&:name).uniq.join(' ')
+  else
+    rows = file_data['X-TIKA:content'].split("\n")
+    rows.each do |line|
+      if line.strip != '' && !line.strip.match(/^Client_\d+_Inv/)
+        header_row = line
+        break
+      end
+    end
+  end
 
-  #puts header_row
-   header_row
+  header_row
 end
 
 def get_language(headers)
@@ -148,7 +156,7 @@ def create_query(file_ending, file_type, charset, language, headers)
 
   unless headers.nil? || headers.empty?
     max_headers = 5
-    headers.split("\t").each_with_index do |header, index|
+    headers.each_with_index do |header, index|
       next if header.empty?
 
       puts header

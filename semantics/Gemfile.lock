@@ -96,6 +96,8 @@ GEM
       rack (~> 2.2, >= 2.2.4)
     rake (13.0.6)
     rbtree (0.4.6)
+    redis (5.0.8)
+      redis-client (>= 0.17.0)
     redis-client (0.17.0)
       connection_pool
     reel (0.6.1)
@@ -169,6 +171,7 @@ DEPENDENCIES
   nokogiri
   nori
   puma
+  redis
   reel
   rest-client
   roo (~> 2.8.0)

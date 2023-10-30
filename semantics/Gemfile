@@ -3,15 +3,12 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
-#gem 'nori'
 gem 'nokogiri'
-#gem 'linkeddata'
-#gem 'rdf'
 gem 'activesupport', '~> 7.0', '<= 7.0.8'
 gem 'activegraph', '>= 10.0.0'
 gem 'neo4j-ruby-driver'
 
-## SINATRA gems
+## SINATRA gem
 gem 'sinatra'
 
 gem 'thin'
@@ -29,3 +26,5 @@ gem 'dotenv'
 
 gem 'sidekiq'
 gem 'sidekiq-cron'
+
+gem 'redis'
