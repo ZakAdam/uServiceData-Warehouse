@@ -1,0 +1,19 @@
+# Define schema
+FT.CREATE supplierIndex ON HASH PREFIX 1 supplier: SCHEMA name TEXT tags TAG
+
+# Load suppliers
+HSET supplier:0 name GLS tags xls,binary,en,Číslo_balíka,PSČ,CodFee,SVFee,Vyzdvihnutie,ManualLabelFee,PU-Country,CreditCardFee
+HSET supplier:1 name Heureka tags xml,utf-8,en,cena,product,product_name,url,products
+HSET supplier:2 name DPD tags csv,ascii,de,TOUR,DEPOTNAME,SCAN_CODE,PARCELNO,DEPOT_CODE,EVENT_DATE_TIME,ROUTE,PCODE
+HSET supplier:3 name GEIS tags csv,utf-8,sk,PSČ,PK,Adresa,Príjemca,Štát,Odosielateľ,Mesto,Dátum_odoslania,Počet_kusov,Číslo_zásielky
+HSET supplier:4 name DHL tags csv,utf-8,en,Invoice_Identifier,Billing_Account_Name,Total_Tax,Currency,Invoice_Number,Receivers_Name,Billing_Account
+
+# Load endpoints
+SET keep_location localhost:4444/geo_location/keep_country
+SET send_email localhost:4444/notifications/send_email
+SET schedule_cron localhost:4444/cron/schedule
+SET dhl localhost:4567/dhl/process
+SET heureka localhost:4567/heureka_reviews/process
+SET geis localhost:4567/geis/process
+SET gls localhost:4567/gls_invoice/process
+SET dpd localhost:4567/dpd_invoice/process
