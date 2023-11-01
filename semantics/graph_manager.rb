@@ -58,17 +58,19 @@ def get_path_conditions(paths, request_conditions)
     next if path_conditions.empty?
 
     hits = 0
+    hits_percentage = 0
     request_conditions.each do |req_cond|
       hits += 1 if path_conditions.include?(req_cond)
     end
 
-    if hits > max_hits
-      max_hits = hits
+    hits_percentage = (hits.to_f / path_conditions.size) * 100
+
+    if hits_percentage > max_hits
+      max_hits = hits_percentage
       best_index = index
     end
 
-    puts "Number of hits for #{index} path: #{hits}"
-    puts "Percentage precision for pipeline: #{(hits.to_f / path_conditions.size) * 100}%"
+    puts "Percentage of hits for #{hits_percentage}% path: #{index}"
     puts '-------------------------------------------------------------------'
   end
 

@@ -21,7 +21,7 @@ post '/semantic/process' do
   # This calls will be later split on standalone containers
   # 1. get file type
   file = params['file'][:tempfile]
-  condition = params['conditions']
+  conditions = params['conditions'].split(', ')
 
   result = file_endings(file.path)
   headers = get_headers(file)
@@ -31,17 +31,18 @@ post '/semantic/process' do
   delimiters = /\t|,|;|\n/
   headers = headers.split(delimiters).reject!(&:empty?)
 
-  thread = Thread.new { get_supplier_by_tags(result[0], result[1], result[2], language, headers) }
+  thread = Thread.new { get_path_by_tags(get_supplier_by_tags(result[0], result[1], result[2], language, headers), conditions) }
 
   ########## Get one supplier, as final answer
   # supplier = get_by_four(result[0], result[1], result[2], language)
   supplier = create_query(result[0], result[1], result[2], language, headers).first
+  supplier_name = supplier.rdfs__label.downcase
 
   ########## Create correct workflow
   #url = supplier.endpoints.first.ns0__url
 
   paths = find_all_paths(supplier)
-  best_path = get_path_conditions(paths, condition.split(', '))
+  best_path = get_path_conditions(paths, conditions << supplier_name)
   urls = get_urls(best_path)
 
 =begin
