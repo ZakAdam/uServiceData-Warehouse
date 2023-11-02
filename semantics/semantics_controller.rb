@@ -2,6 +2,7 @@
 require 'sinatra'
 require 'rest-client'
 require 'json'
+require 'nokogiri'
 load './graph_manager.rb'
 load 'tags/tags_manager.rb'
 
@@ -25,11 +26,13 @@ post '/semantic/process' do
 
   result = file_endings(file.path)
   headers = get_headers(file)
+  puts "HEADERS1: #{headers}"
   language = get_language(headers.gsub(/[,|;\t_]/, ' ')) #/[,|;\t]/
 
   # split headers
   delimiters = /\t|,|;|\n/
-  headers = headers.split(delimiters).reject!(&:empty?)
+  headers = headers.split(delimiters).reject(&:empty?)
+  puts "HEADERS2: #{headers}"
 
   thread = Thread.new { get_path_by_tags(get_supplier_by_tags(result[0], result[1], result[2], language, headers), conditions) }
 
@@ -76,7 +79,7 @@ def get_headers(file)
   if ['application/xml'].include?(file_data['Content-Type'])
     # parse specific file types, such as XML
     doc = File.open(file) { |f| Nokogiri::XML(f) }
-    header_row = doc.search('*').map(&:name).uniq.join(' ')
+    header_row = doc.search('*').map(&:name).uniq.join(',')
   else
     rows = file_data['X-TIKA:content'].split("\n")
     rows.each do |line|
@@ -101,6 +104,7 @@ end
 # Later standalone service
 def file_endings(file)
   name_ending = File.extname(file).delete_prefix('.')
+
   file_type = IO.popen(
     ['file', '--brief', '--mime-type', file],
     in: :close, err: :close
@@ -110,6 +114,8 @@ def file_endings(file)
     ['file', '--brief', '--mime', file],
     in: :close, err: :close
   ) { |io| io.read.chomp.split(';')[1].split('=')[1].strip }
+
+  name_ending = 'csv' if name_ending.empty? && file_type == 'text/plain'
 
   [name_ending, file_type, file_charset]
 end
@@ -125,7 +131,6 @@ def get_by_four(file_ending, file_type, charset, language)
 end
 
 def create_query(file_ending, file_type, charset, language, headers)
-  puts file_ending, file_type, charset, language,
   query = Supplier.as(:n).query
 
   # Define your parameters as a hash
