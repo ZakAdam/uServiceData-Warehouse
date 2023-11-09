@@ -9,6 +9,7 @@ def process_data():
     # Get the 'data' parameter from the request's JSON data
     request_data = request.get_json()
 
+    
     cookie_dict = {
         '__Secure-1PSID': os.getenv('11PSID'),
         '__Secure-1PSIDTS': os.getenv('11PSIDTS'),
@@ -21,10 +22,11 @@ def process_data():
         data = request_data['data']
 
         bard = BardCookies(cookie_dict=cookie_dict)
-        query_string = f'Can  you gave me name of supplier that created data which is {data['file_ending']} format,'
-                       f' {data['language']} language and charset is {data['charset']} and'
-                       f' header row contains these data: {data['headers']}\n'
-                       f'As a response give me please only name of supplier'
+        query_string = f'''Can you give me the name of the supplier that created data in {data["file_ending"]} format,
+    {data["language"]} language, and charset is {data["charset"]} and
+    header row contains these data: {data["headers"]}\n
+    As a response, please give me ONLY (one word!) the name of the supplier'''
+
 
         response = bard.get_answer(query_string)['content']
         print(f'Bard response is: {response}')
