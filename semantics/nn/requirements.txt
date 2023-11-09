@@ -1,2 +1,2 @@
 Flask
-bardapi
+bardapi==0.1.29

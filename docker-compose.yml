@@ -108,4 +108,9 @@ services:
   python-nn:
     build: semantics/nn/.
     ports:
-      - "4445:4445"
+      - "4445:5000"
+    environment:
+      - __Secure-1PSID='cwhfpDNR5QJjewya1OgvOWUOd3sd_fxCE3na3bquQdd1v5Qs2eMRi7kEHBUxKV8idJwYWQ.'
+      - __Secure-1PSIDTS='sidts-CjEBNiGH7rSu41px_n1cGlS4IEfvtqZ158rgQ4v5ySxxqDJg-5Yt2Vp_F9gbKLkYjecREAA'
+      - __Secure-1PSIDCC='ACA-OxPafSs0Caa5Oaid5IQHWNBmCGr0qlx4hwbc90BpRz_UkzN1Ei-w3mb4dAUsuB5G5uDFSg'
+      - __Secure-1PAPISID='xs67jk3H3vTxG1-8/A1s_Hl4rP3RByg2ER'
