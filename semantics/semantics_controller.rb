@@ -26,14 +26,34 @@ post '/semantic/process' do
 
   result = file_endings(file.path)
   headers = get_headers(file)
-  puts "HEADERS1: #{headers}"
   language = get_language(headers.gsub(/[,|;\t_]/, ' ')) #/[,|;\t]/
 
   # split headers
   delimiters = /\t|,|;|\n/
   headers = headers.split(delimiters).reject(&:empty?)
-  puts "HEADERS2: #{headers}"
 
+  data_hash = { file_ending: result[0], mime_type: result[1], charset: result[2], language:, headers:, conditions: }
+
+  ########################################################################
+  # Create three requests to tags, NN and graph
+  responses = []
+  threads = []
+  endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4444/tags/process']
+
+  endpoints.each do |url|
+    threads << Thread.new do
+      response = RestClient.post url.to_s, data: data_hash
+      puts response
+      # responses << response.body
+      responses << response
+    end
+  end
+
+  threads.each(&:join) # Wait for all threads to finish
+  puts "Responses: #{responses.join(', ')}"
+  #######################################################################
+
+=begin
   thread = Thread.new { get_path_by_tags(get_supplier_by_tags(result[0], result[1], result[2], language, headers), conditions) }
 
   ########## Get one supplier, as final answer
@@ -47,6 +67,7 @@ post '/semantic/process' do
   paths = find_all_paths(supplier)
   best_path = get_path_conditions(paths, conditions << supplier_name)
   urls = get_urls(best_path)
+=end
 
 =begin
   RestClient.post urls[0].to_s,
@@ -55,6 +76,22 @@ post '/semantic/process' do
                   urls: urls,
                   url_index: 1
 =end
+end
+
+post '/graph/process' do
+  data = params[:data]
+
+  supplier = create_query(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers]).first
+  supplier_name = supplier.rdfs__label.downcase
+
+  ########## Create correct workflow
+  #url = supplier.endpoints.first.ns0__url
+
+  paths = find_all_paths(supplier)
+  best_path = get_path_conditions(paths, data[:conditions] << supplier_name)
+  urls = get_urls(best_path)
+
+  supplier_name
 end
 
 post '/apache-tika' do
@@ -126,7 +163,7 @@ def get_by_four(file_ending, file_type, charset, language)
           .match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending, ns0__mimeType: $file_type})')
           .match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
           .optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
-          .params(file_ending: file_ending, file_type: file_type, charset: charset, language: language)
+          .params(file_ending:, file_type:, charset:, language:)
           .pluck(:n)
 end
 
@@ -165,8 +202,6 @@ def create_query(file_ending, file_type, charset, language, headers)
     headers.each_with_index do |header, index|
       next if header.empty?
 
-      puts header
-      puts '-----MORE====='
       #query = query.optional_match('(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header})')
       #parameters[:header] = header
       query = query.optional_match("(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})")

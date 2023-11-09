@@ -84,8 +84,9 @@ services:
       - '$HOME/Data/neo4j/import:/var/lib/neo4j/import'
       - '$HOME/Data/neo4j/plugins:/plugins'
     environment:
-      - 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
+      - 'NEO4J_PLUGINS=["apoc", "n10s"]'
       - NEO4J_AUTH=none
+      #- 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
     image: 'neo4j:latest'
 
   apach-tika:

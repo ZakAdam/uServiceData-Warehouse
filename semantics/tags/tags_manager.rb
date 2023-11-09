@@ -1,6 +1,22 @@
 require 'redis'
+require 'sinatra'
 
 REDIS = Redis.new
+
+get '/' do
+  'Hello world!'
+end
+
+post '/tags/process' do
+  data = params[:data]
+
+  supplier = get_supplier_by_tags(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers])
+  path = get_path_by_tags(supplier, data[:conditions])
+
+  supplier
+end
+
+private
 
 def load_data
   File.readlines('./tags/redis-data.txt').each do |row|
@@ -23,13 +39,11 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
   #query = "FT.SEARCH supplierIndex @tags:{binary|en}"
 
   # query = "FT.SEARCH supplierIndex @tags:{#{file_ending}|#{file_type.gsub('-', '\-')}|#{charset.gsub('-', '\-')}|#{language}|#{headers[0..4].join('|')}} RETURN 1 name WITHSCORES"
-  query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]}, '\\\\\0')}}@tags:{#{file_ending}}@tags:{#{charset.gsub(%r{[/\\\-.]}, '\\\\\0')}}@tags:{#{language}}@tags:{#{headers[0..4].join('|')}} RETURN 1 name"
-
-  puts query
-  print query
+  query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]}, 
+                                                           '\\\\\0')}}@tags:{#{file_ending}}@tags:{#{charset.gsub(%r{[/\\\-.]},
+                                                           '\\\\\0')}}@tags:{#{language}}@tags:{#{headers[0..4].join('|')}} RETURN 1 name"
 
   results = REDIS.call(query.split)
-  puts results
 
   puts "Tags identified supplier: #{results[2][1]}"
   results[2][1].downcase
@@ -37,7 +51,6 @@ end
 
 def get_path_by_tags(supplier, conditions)
   query = "MGET #{conditions.join(' ')} #{supplier}"
-  puts query
 
   path = REDIS.call(query.split).compact
   puts "Path created by tags: #{path}"
