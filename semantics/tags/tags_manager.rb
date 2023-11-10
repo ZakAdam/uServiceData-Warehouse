@@ -1,14 +1,16 @@
 require 'redis'
 require 'sinatra'
+require 'json'
 
-REDIS = Redis.new
+#REDIS = Redis.new
+REDIS = Redis.new(url: 'redis://redis-stack-server:6379')
 
 get '/' do
   'Hello world!'
 end
 
 post '/tags/process' do
-  data = params[:data]
+  data = JSON.parse(params[:data], symbolize_names: true)
 
   supplier = get_supplier_by_tags(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers])
   path = get_path_by_tags(supplier, data[:conditions])
@@ -19,7 +21,7 @@ end
 private
 
 def load_data
-  File.readlines('./tags/redis-data.txt').each do |row|
+  File.readlines('./redis-data.txt').each do |row|
     next if row[0] == '#' || row.strip.empty?
 
     REDIS.call(row.split)

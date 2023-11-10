@@ -38,11 +38,12 @@ post '/semantic/process' do
   # Create three requests to tags, NN and graph
   responses = []
   threads = []
-  endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4444/tags/process']
+  endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4445/nn/process']
+  #endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process']
 
   endpoints.each do |url|
     threads << Thread.new do
-      response = RestClient.post url.to_s, data: data_hash
+      response = RestClient.post url.to_s, data: data_hash.to_json
       puts response
       # responses << response.body
       responses << response
@@ -79,7 +80,9 @@ post '/semantic/process' do
 end
 
 post '/graph/process' do
-  data = params[:data]
+  data = JSON.parse(params[:data], symbolize_names: true)
+
+  puts "Data class: #{data.class}"
 
   supplier = create_query(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers]).first
   supplier_name = supplier.rdfs__label.downcase

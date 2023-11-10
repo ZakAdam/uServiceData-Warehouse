@@ -13,3 +13,4 @@ gem 'http'
 gem 'webrick'
 
 gem 'redis'
+gem 'json'
