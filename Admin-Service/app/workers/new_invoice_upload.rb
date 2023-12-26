@@ -4,8 +4,7 @@ require 'dotenv'
 
 Dotenv.load
 
-sidekiq_config = { url: ENV['REDIS_SIDEKIQ_URL'] }
-#sidekiq_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
+sidekiq_config = { host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'] }
 
 Sidekiq.configure_server do |config|
   config.redis = sidekiq_config
@@ -18,14 +17,14 @@ end
 class NewInvoiceUpload
   include Sidekiq::Worker
   sidekiq_options queue: 'transport_invoices'
-  sidekiq_options :retry => 2
+  sidekiq_options retry: 2
 
-  def perform(file_name, file_type)
+  def perform(file_name, conditions)
     puts 'Halooooooooooooooooooooooo'
     begin
       #RestClient.get "admin_service:3000/get_file", {params: {name: file_name, jid: self.jid}}
       RestClient::Request.execute(method: :get, url: 'admin_service:3000/get_file',
-                                  timeout: 600, headers: { params: { name: file_name, file_type: file_type, jid: self.jid } })
+                                  timeout: 600, headers: { params: { name: file_name, conditions:, jid: self.jid } })
       #RestClient::Request.execute(method: :get, url: 'admin_service:3000/get_file',
       #                            timeout: 600, headers: { params: { name: file_name, file_type: file_type, jid: self.jid } })
     rescue RestClient::Exceptions::ReadTimeout

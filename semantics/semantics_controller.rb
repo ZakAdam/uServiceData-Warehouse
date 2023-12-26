@@ -38,8 +38,9 @@ post '/semantic/process' do
   # Create three requests to tags, NN and graph
   responses = []
   threads = []
-  endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4445/nn/process']
-  #endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process']
+  #endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4444/tags/process']
+  #endpoints = ['localhost:5000/nn/process']
+  endpoints = ['tags:4444/tags/process', 'localhost:4321/graph/process']
 
   endpoints.each do |url|
     threads << Thread.new do
@@ -80,18 +81,19 @@ post '/semantic/process' do
 end
 
 post '/graph/process' do
-  data = JSON.parse(params[:data], symbolize_names: true)
+  data = JSON.parse(params[:data])
 
-  puts "Data class: #{data.class}"
+  #supplier = create_query(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers]).first
+  puts data
 
-  supplier = create_query(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers]).first
+  supplier = create_query(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers']).first
   supplier_name = supplier.rdfs__label.downcase
 
   ########## Create correct workflow
   #url = supplier.endpoints.first.ns0__url
 
   paths = find_all_paths(supplier)
-  best_path = get_path_conditions(paths, data[:conditions] << supplier_name)
+  best_path = get_path_conditions(paths, data['conditions'] << supplier_name)
   urls = get_urls(best_path)
 
   supplier_name
@@ -110,8 +112,8 @@ private
 def get_headers(file)
   # testing file
   # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
-  # response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
-  response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
+  response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
+  # response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
   file_data = JSON.parse(response)[0]
 
   header_row = nil
@@ -134,8 +136,8 @@ def get_headers(file)
 end
 
 def get_language(headers)
-  language = RestClient.put('localhost:9998/language/stream', headers:)
-  #language = RestClient.put('apach-tika:9998/language/stream', headers:)
+  # language = RestClient.put('localhost:9998/language/stream', headers:)
+  language = RestClient.put('apach-tika:9998/language/stream', headers:)
 
   puts "Language for the file is: #{language}"
   language

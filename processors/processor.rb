@@ -115,12 +115,14 @@ def parse_review(product)
   product['reviews'].each do |review|
     review = review[1]
     converted_time = Time.at(review['unix_timestamp'].to_i)
-    review_hash = {rating: review['rating'],
-                   summary: nil,
-                   converted_timestamp: converted_time,
-                   original_id: review['rating_id'],
-                   unix_timestamp: review['unix_timestamp'],
-                   product_id: nil}
+    review_hash = {
+      rating: review['rating'],
+      summary: nil,
+      converted_timestamp: converted_time,
+      original_id: review['rating_id'],
+      unix_timestamp: review['unix_timestamp'],
+      product_id: nil
+    }
 
     if review.key?('pros')
       review_hash[:pros] = review['pros']

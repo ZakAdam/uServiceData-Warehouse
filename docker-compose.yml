@@ -10,12 +10,14 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
 
   processor:
     build: processors/.
     environment:
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
     ports:
       - "4560-4570:4567"
     links:
@@ -33,15 +35,17 @@ services:
       - POSTGRES_USER=adam # postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
 
   sidekiq-heureka:
     build: downloaders/.
     environment:
       - SINGLE=true
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
       - START-JOB=false
-      - SCHEDULE-JOB=true
+      - SCHEDULE-JOB=false
       - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
     command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
 
@@ -53,7 +57,8 @@ services:
       - SFTP_HOST=172.17.0.1
       - SFTP_USER=sftp_user
       - SFTP_PASSWORD=postgres
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
       - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
@@ -63,13 +68,15 @@ services:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
     environment:
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
       build: workers/
       environment:
-        - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+        - REDIS_HOST=redis-stack-server
+        - REDIS_PORT=6379
       privileged: true
       command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
@@ -87,7 +94,7 @@ services:
       - 'NEO4J_PLUGINS=["apoc", "n10s"]'
       - NEO4J_AUTH=none
       #- 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
-    image: 'neo4j:latest'
+    image: 'neo4j:5.5.0'
 
   apach-tika:
     image: 'apache/tika:latest-full'
@@ -98,6 +105,9 @@ services:
     build: semantics/.
     ports:
       - "4321:4321"
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
 
   redis-stack-server:
     container_name: redis-stack-server
@@ -119,3 +129,6 @@ services:
     build: semantics/tags/.
     ports:
       - "4444:4444"
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
