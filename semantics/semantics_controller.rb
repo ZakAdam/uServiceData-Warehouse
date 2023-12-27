@@ -71,13 +71,16 @@ post '/semantic/process' do
   urls = get_urls(best_path)
 =end
 
-=begin
+  urls = get_urls(responses[1])
+
+  puts "Selected URLs by Graph are: #{urls}"
+
   RestClient.post urls[0].to_s,
                   file_type: result[1],
                   file: File.open(file),
                   urls: urls,
                   url_index: 1
-=end
+
 end
 
 post '/graph/process' do
@@ -94,9 +97,10 @@ post '/graph/process' do
 
   paths = find_all_paths(supplier)
   best_path = get_path_conditions(paths, data['conditions'] << supplier_name)
-  urls = get_urls(best_path)
+  # urls = get_urls(best_path)
 
-  supplier_name
+  puts "Graph identified supplier as: #{supplier_name}"
+  best_path
 end
 
 post '/apache-tika' do

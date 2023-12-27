@@ -80,6 +80,14 @@ services:
       privileged: true
       command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
+  optional-processors:
+    build: processors/optional_processors/.
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+    ports:
+      - "5000:4567"
+
   neo4j:
     container_name: neo4j-compose
     ports:

@@ -86,21 +86,21 @@
     a              warehouse:Endpoint ;
     rdfs:label     "GLS endpoint" ;
     #warehouse:url  "processor:4567/gls_invoice/process" ;
-    warehouse:url  "localhost:4567/gls_invoice/process" ;
+    warehouse:url  "processor:4567/gls_invoice/process" ;
     warehouse:condition "gls" ;
     warehouse:method    "POST"  .
 
 <http://warehouse.org/endpoint/2>
     a              warehouse:Endpoint ;
     rdfs:label     "Heureka endpoint" ;
-    warehouse:url  "localhost:4567/heureka_reviews/process" ;
+    warehouse:url  "processor:4567/heureka_reviews/process" ;
     warehouse:condition "heureka" ;
     warehouse:method    "POST"  .
 
 <http://warehouse.org/endpoint/3>
     a              warehouse:Endpoint ;
     rdfs:label     "DPD endpoint" ;
-    warehouse:url  "localhost:4567/dpd_invoice/process" ;
+    warehouse:url  "processor:4567/dpd_invoice/process" ;
     warehouse:condition "dpd" ;
     warehouse:method    "POST"  .
 
@@ -108,7 +108,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "Keep location" ;
     #warehouse:url  "optional_processor:4444/geo_location/keep_country" ;
-    warehouse:url  "localhost:4444/geo_location/keep_country" ;
+    warehouse:url  "optional-processors:5000/geo_location/keep_country" ;
     warehouse:method    "POST"  ;
     warehouse:condition "keep_location" ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/5> .
@@ -117,7 +117,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "Send Email Report" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "localhost:4444/notifications/send_email" ;
+    warehouse:url  "optional-processors:5000/notifications/send_email" ;
     warehouse:method    "POST"  ;
     warehouse:condition "send_email" ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/6> ;
@@ -129,7 +129,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "Schedule CRON job" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "localhost:4444/cron/schedule" ;
+    warehouse:url  "optional-processors:5000/cron/schedule" ;
     warehouse:method    "POST"  ;
     warehouse:condition "schedule_cron" ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/7> ;
@@ -141,7 +141,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "DHL endpoint" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "localhost:4567/dhl/process" ;
+    warehouse:url  "optional-processors:5000/dhl/process" ;
     warehouse:condition "dhl" ;
     warehouse:method    "POST"  .
 
@@ -149,7 +149,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "GEIS endpoint" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "localhost:4567/geis/process" ;
+    warehouse:url  "optional-processors:5000/geis/process" ;
     warehouse:condition "geis" ;
     warehouse:method    "POST"  .
 
