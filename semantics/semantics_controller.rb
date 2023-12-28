@@ -71,7 +71,8 @@ post '/semantic/process' do
   urls = get_urls(best_path)
 =end
 
-  urls = get_urls(responses[1])
+  urls = JSON.parse(responses[1])
+  #urls = get_urls(url_array)
 
   puts "Selected URLs by Graph are: #{urls}"
 
@@ -97,10 +98,11 @@ post '/graph/process' do
 
   paths = find_all_paths(supplier)
   best_path = get_path_conditions(paths, data['conditions'] << supplier_name)
-  # urls = get_urls(best_path)
+  urls = get_urls(best_path)
 
   puts "Graph identified supplier as: #{supplier_name}"
-  best_path
+  urls.to_s
+  # supplier_name
 end
 
 post '/apache-tika' do
