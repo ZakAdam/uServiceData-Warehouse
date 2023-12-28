@@ -20,8 +20,6 @@ services:
       - REDIS_PORT=6379
     ports:
       - "4560-4570:4567"
-    links:
-      - "saver:saver"
 
   saver:
     build: savers/.

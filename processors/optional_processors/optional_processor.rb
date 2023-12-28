@@ -22,7 +22,7 @@ post '/geo_location/keep_country' do
 
   RestClient.post params[:urls][params[:url_index].to_i],
                   file_type: params[:file_type],
-                  file: params[:file],
+                  file: params[:file][:tempfile],
                   docker_id: @docker_id,
                   urls: params[:urls],
                   url_index: params[:url_index].to_i + 1
@@ -35,7 +35,7 @@ post '/notifications/send_email' do
 
   RestClient.post params[:urls][params[:url_index].to_i],
                   file_type: params[:file_type],
-                  file: params[:file],
+                  file: params[:file][:tempfile],
                   docker_id: @docker_id,
                   urls: params[:urls],
                   url_index: params[:url_index].to_i + 1
@@ -49,7 +49,7 @@ post '/cron/schedule' do
 
   RestClient.post params[:urls][params[:url_index].to_i],
                   file_type: params[:file_type],
-                  file: params[:file],
+                  file: params[:file][:tempfile],
                   docker_id: @docker_id,
                   urls: params[:urls],
                   url_index: params[:url_index].to_i + 1

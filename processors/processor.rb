@@ -63,7 +63,7 @@ post '/heureka_reviews/process' do
 end
 
 post '/dpd_invoice/process' do
-  data = SmarterCSV.process(params['file'][:tempfile].path, {col_sep: ';'})
+  data = SmarterCSV.process(params['file'][:tempfile].path, { col_sep: ';' })
 
   RestClient.post "saver:3000/package_tracking/save", :trackings => data, :docker_id => @docker_id
 end
