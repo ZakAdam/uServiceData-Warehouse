@@ -12,7 +12,7 @@ services:
       - POSTGRES_PORT=5432
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - SEMANTIC-PROCESSING=true
+      - SEMANTIC-PROCESSING=false
 
   processor:
     build: processors/.
@@ -79,63 +79,8 @@ services:
       privileged: true
       #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
-  optional-processors:
-    build: processors/optional_processors/.
-    environment:
-      - REDIS_HOST=redis-stack-server
-      - REDIS_PORT=6379
-    ports:
-      - "5000:4567"
-
-  neo4j:
-    container_name: neo4j-compose
-    ports:
-      - '7687:7687'
-      - '7474:7474'
-    volumes:
-      - '$HOME/Data/neo4j/data:/data'
-      - '$HOME/Data/neo4j/logs:/logs'
-      - '$HOME/Data/neo4j/import:/var/lib/neo4j/import'
-      - '$HOME/Data/neo4j/plugins:/plugins'
-    environment:
-      - 'NEO4J_PLUGINS=["apoc", "n10s"]'
-      - NEO4J_AUTH=none
-      #- 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
-    image: 'neo4j:5.5.0'
-
-  apach-tika:
-    image: 'apache/tika:latest-full'
-    ports:
-        - '9998:9998'
-
-  semantics:
-    build: semantics/.
-    ports:
-      - "4321:4321"
-    environment:
-      - REDIS_HOST=redis-stack-server
-      - REDIS_PORT=6379
-
   redis-stack-server:
     container_name: redis-stack-server
     ports:
       - '6379:6379'
     image: 'redis/redis-stack-server:latest'
-
-  python-nn:
-    build: semantics/nn/.
-    ports:
-      - "4445:5000"
-    environment:
-      - PSID=cwhfpDNR5QJjewya1OgvOWUOd3sd_fxCE3na3bquQdd1v5Qs2eMRi7kEHBUxKV8idJwYWQ.
-      - PSIDTS=sidts-CjEBNiGH7qXcXZZDCRWTO0ecQ6SU822paZU_RbIhP-N8FjLVMmsofoNhEX1L8_jf9dMmEAA
-      - PSIDCC=ACA-OxO_qQNP7x0KA9cuchmABJEJ_sPI25_OEJEF-l1IoRCVQb3mVYHOcz8iLzdr95KzXm6aCTc
-      - PAPISID=xs67jk3H3vTxG1-8/A1s_Hl4rP3RByg2ER
-
-  tags:
-    build: semantics/tags/.
-    ports:
-      - "4444:4444"
-    environment:
-      - REDIS_HOST=redis-stack-server
-      - REDIS_PORT=6379

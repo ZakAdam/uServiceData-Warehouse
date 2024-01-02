@@ -1,4 +1,7 @@
 require 'rest-client'
+require 'dotenv'
+
+Dotenv.load
 
 class PostsController < ApplicationController
   skip_before_action :verify_authenticity_token
@@ -21,8 +24,11 @@ class PostsController < ApplicationController
     jid = params[:jid]
 
     file = File.open("./public/files/#{file_name}")
-    RestClient.post 'semantics:4321/semantic/process', conditions:, file: file, jid: jid
-    #RestClient.post '172.17.0.1:4321/apache-tika', file_type: file_type, file: file, jid: jid
-    #RestClient.post 'processor:4567/gls_invoice/process', file_type: file_type, file: file, jid: jid
+
+    if ENV['SEMANTIC-PROCESSING'] == 'true'
+      RestClient.post 'semantics:4321/semantic/process', conditions:, file: file, jid: jid
+    else
+      RestClient.post 'processor:4567/gls_invoice/process', conditions: , file: file, jid: jid
+    end
   end
 end
