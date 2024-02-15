@@ -7,7 +7,7 @@ do
 	#curl -X POST -F 'file=@../../AdamZak/Faktury/gls Inv_981396513_Client_980003355.xls' localhost:4001/upload
 	#curl -X POST -F 'file=@../files/test_files/Faktury/gls Inv_981406669_Client_980003355.xls' localhost:4001/upload
 	#curl -X POST -F 'file=@../../AdamZak/Faktury/gls Inv_981401555_Client_980003355.xls' localhost:4001/upload
-	curl -X POST -F 'file=@../files/test_files/Faktury/gls Inv_981406669_Client_980003355.xls' -F 'conditions=adam, marek, peter' localhost:4001/upload
+	curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=adam, marek, peter' localhost:4001/upload
 done
 echo 'Konec scriptu'
 date +"%T"
