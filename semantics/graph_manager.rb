@@ -54,7 +54,7 @@ def get_path_conditions(paths, request_conditions)
   end
 
   max_hits = 0
-  best_index = nil
+  best_index = 0
   conditions.each_with_index do |path_conditions, index|
     next if path_conditions.empty?
 

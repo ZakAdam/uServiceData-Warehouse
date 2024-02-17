@@ -66,7 +66,7 @@ end
 
 post '/graph/process' do
   data = JSON.parse(params[:data])
-  
+
   supplier = create_query(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers']).first
   supplier_name = supplier.rdfs__label.downcase
 
