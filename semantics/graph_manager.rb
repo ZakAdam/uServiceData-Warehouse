@@ -43,6 +43,7 @@ end
 
 def get_path_conditions(paths, request_conditions)
   conditions = []
+
   paths.each do |path|
     path_conditions = []
     path.each do |node|
@@ -58,7 +59,7 @@ def get_path_conditions(paths, request_conditions)
     next if path_conditions.empty?
 
     hits = 0
-    hits_percentage = 0
+
     request_conditions.each do |req_cond|
       hits += 1 if path_conditions.include?(req_cond)
     end
@@ -92,40 +93,3 @@ def get_urls(path)
 
   urls
 end
-
-=begin
-def get_all_possible_paths(entrypoints)
-  required_conditions = {}
-
-  # query = "MATCH (e:ns0__Endpoint)-[:ns0__HAS_endpoint*]->(children:ns0__Endpoint)
-  #         WHERE e.rdfs__label = $label
-  #         RETURN collect(e) + collect(children) AS nodes"
-
-  #  response = ActiveGraph::Base.query(query, label: label)
-
-  entrypoints.each do |label|
-    response = Endpoint.find_by(rdfs__label: label).endpoints(rel_length: { min: 0 })
-
-    required_conditions[label] = {}
-    response.each do |node|
-      puts node.rdfs__label
-      required_conditions[label][node.rdfs__label] = if node.ns0__condition.nil?
-                                                        [true, node.ns0__url]
-                                                      else
-                                                        [node.ns0__condition, node.ns0__url]
-                                                      end
-    end
-  end
-
-  #  response.first.values.first.each do |node|
-  #  puts node.rdfs__label
-  #  required_conditions[node.rdfs__label] = if node.ns0__condition.nil?
-  #                                            [true, node.ns0__url]
-  #                                          else
-  #                                            [node.ns0__condition, node.ns0__url]
-  #                                          end
-  #end
-
-  required_conditions
-end
-=end

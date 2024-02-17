@@ -35,12 +35,10 @@ post '/semantic/process' do
   data_hash = { file_ending: result[0], mime_type: result[1], charset: result[2], language:, headers:, conditions: }
 
   ########################################################################
-  # Create three requests to tags, NN and graph
+  # Create three requests to specified semantic approaches
   responses = []
   threads = []
-  #endpoints = ['localhost:4444/tags/process', 'localhost:4321/graph/process', 'localhost:4444/tags/process']
-  #endpoints = ['localhost:5000/nn/process']
-  endpoints = ['tags:4444/tags/process', 'localhost:4321/graph/process']
+  endpoints = semantic_methods
 
   endpoints.each do |url|
     threads << Thread.new do
@@ -53,26 +51,8 @@ post '/semantic/process' do
 
   threads.each(&:join) # Wait for all threads to finish
   puts "Responses: #{responses.join(', ')}"
-  #######################################################################
-
-=begin
-  thread = Thread.new { get_path_by_tags(get_supplier_by_tags(result[0], result[1], result[2], language, headers), conditions) }
-
-  ########## Get one supplier, as final answer
-  # supplier = get_by_four(result[0], result[1], result[2], language)
-  supplier = create_query(result[0], result[1], result[2], language, headers).first
-  supplier_name = supplier.rdfs__label.downcase
-
-  ########## Create correct workflow
-  #url = supplier.endpoints.first.ns0__url
-
-  paths = find_all_paths(supplier)
-  best_path = get_path_conditions(paths, conditions << supplier_name)
-  urls = get_urls(best_path)
-=end
 
   urls = JSON.parse(responses[1])
-  #urls = get_urls(url_array)
 
   puts "Selected URLs by Graph are: #{urls}"
 
@@ -86,23 +66,17 @@ end
 
 post '/graph/process' do
   data = JSON.parse(params[:data])
-
-  #supplier = create_query(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers]).first
-  puts data
-
+  
   supplier = create_query(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers']).first
   supplier_name = supplier.rdfs__label.downcase
 
   ########## Create correct workflow
-  #url = supplier.endpoints.first.ns0__url
-
   paths = find_all_paths(supplier)
   best_path = get_path_conditions(paths, data['conditions'] << supplier_name)
   urls = get_urls(best_path)
 
   puts "Graph identified supplier as: #{supplier_name}"
   urls.to_s
-  # supplier_name
 end
 
 post '/apache-tika' do
@@ -230,4 +204,13 @@ def create_query(file_ending, file_type, charset, language, headers)
 
   # Finally, pluck the result
   query.pluck(:n)
+end
+
+def semantic_methods
+  endpoints = []
+
+  endpoints << 'localhost:4321/graph/process' if ENV['ONTOLOGY'] == 'true'
+  endpoints << 'tags:4444/tags/process' if ENV['TAGGING'] == 'true'
+
+  endpoints
 end

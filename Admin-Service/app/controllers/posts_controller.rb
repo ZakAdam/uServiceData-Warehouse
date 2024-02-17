@@ -28,7 +28,7 @@ class PostsController < ApplicationController
     if ENV['SEMANTIC-PROCESSING'] == 'true'
       RestClient.post 'semantics:4321/semantic/process', conditions:, file: file, jid: jid
     else
-      RestClient.post 'processor:4567/gls_invoice/process', conditions: , file: file, jid: jid
+      RestClient.post 'processor:4567/gls_invoice/process', conditions:, file: file, jid: jid
     end
   end
 end

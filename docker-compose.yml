@@ -10,14 +10,14 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_HOST=redis-stack-server
+      - REDIS_HOST=172.17.0.1               # redis-stack-server
       - REDIS_PORT=6379
       - SEMANTIC-PROCESSING=true
 
   processor:
     build: processors/.
     environment:
-      - REDIS_HOST=redis-stack-server
+      - REDIS_HOST=172.17.0.1
       - REDIS_PORT=6379
     ports:
       - "4560-4570:4567"
@@ -41,7 +41,7 @@ services:
     build: downloaders/.
     environment:
       - SINGLE=true
-      - REDIS_HOST=redis-stack-server
+      - REDIS_HOST=172.17.0.1
       - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
@@ -56,7 +56,7 @@ services:
       - SFTP_HOST=172.17.0.1
       - SFTP_USER=sftp_user
       - SFTP_PASSWORD=postgres
-      - REDIS_HOST=redis-stack-server
+      - REDIS_HOST=172.17.0.1
       - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
@@ -67,14 +67,14 @@ services:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
     environment:
-      - REDIS_HOST=redis-stack-server
+      - REDIS_HOST=172.17.0.1       # redis-stack-server
       - REDIS_PORT=6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
       build: workers/
       environment:
-        - REDIS_HOST=redis-stack-server
+        - REDIS_HOST=172.17.0.1
         - REDIS_PORT=6379
       privileged: true
       #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
@@ -115,6 +115,8 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
+      - ONTOLOGY=true
+      - TAGGING=true
 
   redis-stack-server:
     container_name: redis-stack-server

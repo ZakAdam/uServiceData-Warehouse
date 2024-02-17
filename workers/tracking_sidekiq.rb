@@ -15,7 +15,7 @@ Sidekiq.configure_client do |config|
 end
 
 class NewInvoiceUpload
-  include Sidekiq::Worker
+  include Sidekiq::Job
   sidekiq_options queue: 'transport_invoices'
   sidekiq_options :retry => 2
 
@@ -29,5 +29,16 @@ class NewInvoiceUpload
       puts self.jid
       return
     end
+  end
+end
+
+class TestWorker
+  include Sidekiq::Job
+  sidekiq_options queue: 'transport_invoices'
+
+  def perform(name, age)
+    puts Time.now
+    puts "I am #{name}, running my first job at #{age}"
+    puts 'Sidekiq funguje!'
   end
 end
