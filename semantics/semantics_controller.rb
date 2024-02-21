@@ -52,7 +52,14 @@ post '/semantic/process' do
   threads.each(&:join) # Wait for all threads to finish
   puts "Responses: #{responses.join(', ')}"
 
-  urls = JSON.parse(responses[1])
+  if ENV['ONTOLOGY'] == 'true'
+    urls = JSON.parse(responses[1])
+  elsif ENV['TAGGING'] == 'true'
+    urls = JSON.parse(responses[0])
+  else
+    puts 'No semantic approach selected, ending processing!'
+    return 200
+  end
 
   puts "Selected URLs by Graph are: #{urls}"
 

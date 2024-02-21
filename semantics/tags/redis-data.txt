@@ -9,11 +9,11 @@ HSET supplier:3 name GEIS tags csv,utf-8,sk,text/plain,PSČ,PK,Adresa,Príjemca,
 HSET supplier:4 name DHL tags csv,utf-8,en,text/csv,Line_Type,Billing_Source,Original_Invoice_Number,Invoice_Identifier,Billing_Account_Name,Station_Code,Total_Tax,Currency,Invoice_Number,Receivers_Name,Billing_Account
 
 # Load endpoints
-SET keep_location localhost:4444/geo_location/keep_country
-SET send_email localhost:4444/notifications/send_email
-SET schedule_cron localhost:4444/cron/schedule
-SET dhl localhost:4567/dhl/process
-SET heureka localhost:4567/heureka_reviews/process
-SET geis localhost:4567/geis/process
-SET gls localhost:4567/gls_invoice/process
+SET keep_location optional-processors:4567/geo_location/keep_country
+SET send_email optional-processors:4567/notifications/send_email
+SET schedule_cron optional-processors:4567/cron/schedule
+SET dhl processor:4567/dhl/process
+SET heureka processor:4567/heureka_reviews/process
+SET geis processor:4567/geis/process
+SET gls processor:4567/gls_invoice/process
 SET dpd localhost:4567/dpd_invoice/process

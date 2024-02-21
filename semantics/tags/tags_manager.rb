@@ -61,5 +61,5 @@ def get_path_by_tags(supplier, conditions)
 
   path = REDIS.call(query.split).compact
   puts "Path created by tags: #{path}"
-  path
+  path.to_s
 end

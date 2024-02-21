@@ -115,7 +115,7 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=true
+      - ONTOLOGY=false
       - TAGGING=true
 
   redis-stack-server:
