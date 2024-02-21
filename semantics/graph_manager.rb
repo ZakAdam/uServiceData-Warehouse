@@ -53,8 +53,11 @@ def get_path_conditions(paths, request_conditions)
     conditions << path_conditions
   end
 
+  max_hits_percentage = 0
   max_hits = 0
   best_index = 0
+
+
   conditions.each_with_index do |path_conditions, index|
     next if path_conditions.empty?
 
@@ -66,18 +69,24 @@ def get_path_conditions(paths, request_conditions)
 
     hits_percentage = (hits.to_f / path_conditions.size) * 100
 
-    if hits_percentage > max_hits
-      max_hits = hits_percentage
+    if hits_percentage > max_hits_percentage
+      max_hits_percentage = hits_percentage
+      max_hits = hits
+      best_index = index
+    # if same percentage but more conditions met - 100% conditions fix
+    elsif hits_percentage == max_hits_percentage && hits > max_hits
+      max_hits_percentage = hits_percentage
+      max_hits = hits
       best_index = index
     end
 
-    puts "Percentage of hits for #{hits_percentage}% path: #{index}"
+    puts "Percentage of hits for #{hits_percentage}% path: #{index} -> number of hits #{max_hits}"
     puts '-------------------------------------------------------------------'
   end
 
   print conditions
 
-  puts "Max number of hits was: #{max_hits} for array index: #{best_index}"
+  puts "Max number of hits was: #{max_hits_percentage} for array index: #{best_index} -> number of hits #{max_hits}"
   print_workflow(paths[best_index])
 
   paths[best_index]
