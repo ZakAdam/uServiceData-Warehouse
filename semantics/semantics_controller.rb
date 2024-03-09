@@ -53,7 +53,7 @@ post '/semantic/process' do
   puts "Responses: #{responses.join(', ')}"
 
   if ENV['ONTOLOGY'] == 'true'
-    urls = JSON.parse(responses[1])
+    urls = JSON.parse(responses[0])
   elsif ENV['TAGGING'] == 'true'
     urls = JSON.parse(responses[0])
   else

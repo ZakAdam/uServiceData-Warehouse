@@ -17,7 +17,8 @@ post '/tags/process' do
 
   # supplier = get_supplier_by_tags(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers])
   supplier = get_supplier_by_tags(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers'])
-  path = get_path_by_tags(supplier, data['conditions'])
+  conditions = data['conditions'].to_a.empty? ? '' : data['conditions'].first.split(',')
+  path = get_path_by_tags(supplier, conditions)
 
   puts "Tags identified supplier as: #{supplier}"
   path
