@@ -34,6 +34,9 @@ post '/semantic/process' do
 
   data_hash = { file_ending: result[0], mime_type: result[1], charset: result[2], language:, headers:, conditions: }
 
+  puts 'FILE PROPERTIES'
+  puts "Identified data properties: #{data_hash}"
+
   ########################################################################
   # Create three requests to specified semantic approaches
   responses = []
@@ -74,7 +77,7 @@ end
 post '/graph/process' do
   data = JSON.parse(params[:data])
 
-  supplier = create_query(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers']).first
+  supplier = create_query(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers'])
   supplier_name = supplier.rdfs__label.downcase
 
   ########## Create correct workflow
@@ -126,8 +129,8 @@ def get_language(headers)
   # language = RestClient.put('localhost:9998/language/stream', headers:)
   language = RestClient.put('apach-tika:9998/language/stream', headers:)
 
-  puts "Language for the file is: #{language}"
-  language
+  puts "Language for the file is: #{language.body}"
+  language.body
 end
 
 # Later standalone service
@@ -159,33 +162,35 @@ def get_by_four(file_ending, file_type, charset, language)
           .pluck(:n)
 end
 
+=begin
 def create_query(file_ending, file_type, charset, language, headers)
-  query = Supplier.as(:n).query
+  # query = Supplier.as(:n).query
+  query = ActiveGraph::Core::Query.new
 
   # Define your parameters as a hash
   parameters = {}
 
   # REMOVED bcs headings doesnt work otherwise :) ALSO file_ending shouldn't be required options, as it can be false
-  # unless file_ending.nil? || file_ending.empty?
-  #   query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})')
-  #   parameters[:file_ending] = file_ending
-  # end
+  unless file_ending.nil? || file_ending.empty?
+    query = query.optional_match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})').break
+    parameters[:file_ending] = file_ending
+  end
 
   # Add a MATCH clause for file_type if it is provided
   unless file_type.nil? || file_type.empty?
-    query = query.match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})')
+    query = query.optional_match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})').break
     parameters[:file_type] = file_type
   end
 
   # Add a MATCH clause for charset if it is provided
   unless charset.nil? || charset.empty?
-    query = query.match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})')
+    query = query.optional_match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})').break
     parameters[:charset] = charset
   end
 
   # Add an OPTIONAL MATCH clause for language if it is provided
   unless language.nil? || language.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})')
+    query = query.optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})').break
     parameters[:language] = language
   end
 
@@ -196,7 +201,7 @@ def create_query(file_ending, file_type, charset, language, headers)
 
       #query = query.optional_match('(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header})')
       #parameters[:header] = header
-      query = query.optional_match("(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})")
+      query = query.optional_match("(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})").break
       parameters["header_#{index}".to_sym] = header
       #parameters[:header_1] = 'Číslo balíka'
 
@@ -211,6 +216,81 @@ def create_query(file_ending, file_type, charset, language, headers)
 
   # Finally, pluck the result
   query.pluck(:n)
+end
+=end
+
+def create_query(file_ending, file_type, charset, language, headers)
+  # Create a new query object
+  # query = ActiveGraph::Core::Query.new
+  query_string = ''
+  with_string = ' WITH n, '
+  total_count = []
+
+  # Define your parameters as a hash
+  parameters = {}
+
+  query_string << 'MATCH (n) WHERE (n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})'
+  with_string << 'COUNT(CASE WHEN (n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type}) THEN 1 ELSE NULL END) AS file_type_count,'
+  total_count << 'file_type_count'
+  parameters[:file_type] = file_type
+
+  unless file_ending.nil? || file_ending.empty?
+    query_string << ' OR (n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})'
+    with_string << 'COUNT(CASE WHEN (n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending}) THEN 1 ELSE NULL END) AS file_ending_count,'
+    total_count << 'file_ending_count'
+    parameters[:file_ending] = file_ending
+  end
+
+  # OPTIONAL MATCH for charset (if provided)
+  unless charset.nil? || charset.empty?
+    query_string << ' OR (n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})'
+    with_string << 'COUNT(CASE WHEN (n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset}) THEN 1 ELSE NULL END) AS charset_count,'
+    total_count << 'charset_count'
+    parameters[:charset] = charset
+  end
+
+  # OPTIONAL MATCH for language (if provided)
+  unless language.nil? || language.empty?
+    query_string << ' OR (n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})'
+    with_string << 'COUNT(CASE WHEN (n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language}) THEN 1 ELSE NULL END) AS language_count,'
+    total_count << 'language_count'
+    parameters[:language] = language
+  end
+
+  # OPTIONAL MATCH clauses for headers (dynamically build)
+  if headers.present?
+    max_headers = 5
+    headers.each_with_index do |header, index|
+      next if header.empty?
+
+      puts header
+      query_string << " OR (n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})"
+      with_string << "COUNT(CASE WHEN (n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}}) THEN 1 ELSE NULL END) AS count_#{index},"
+      total_count << "count_#{index}"
+      parameters["header_#{index}".to_sym] = header
+
+      break if index > max_headers
+    end
+  end
+
+  query_string << with_string.chop
+
+  query_string << " RETURN n, file_type_count, file_ending_count, charset_count, language_count, count_0, count_1, count_2, count_3, count_4, count_5, count_6, #{total_count.join(' + ')} AS totalCount ORDER BY totalCount DESC;"
+
+  puts query_string
+  puts parameters
+  query = ActiveGraph::Base.query(query_string, parameters)
+  # query.parameters = parameters
+
+  puts query.to_a
+  query.to_a.each do |supplier|
+    puts supplier.inspect
+    puts supplier[:n]
+    puts supplier[:totalCount]
+  end
+
+  # Return the constructed query
+  query.first[:n]
 end
 
 def semantic_methods
