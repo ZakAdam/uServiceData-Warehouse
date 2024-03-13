@@ -43,6 +43,13 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
     load_data
   end
 
+  # TODO: delete these after testing!!!
+  language = 'pl'
+  charset = 'sturovcina'
+  file_type = 'nist'
+
+  ####################
+
   headers = headers.map { |s| s.gsub(' ', '_') }
   #query = "FT.SEARCH supplierIndex @tags:{binary|en}"
 
@@ -51,9 +58,14 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
   #                                                         '\\\\\0')}}@tags:{#{file_ending}}@tags:{#{charset.gsub(%r{[/\\\-.]},
   #                                                         '\\\\\0')}}@tags:{#{language}}@tags:{#{headers[0..6].join('|')}} RETURN 1 name"
 
-  query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]},
-           '\\\\\0')}|#{file_ending}|#{charset.gsub(%r{[/\\\-.]},
-           '\\\\\0')}|#{language}|#{headers[0..4].join('|')}} WITHSCORES"
+  if file_ending.empty?
+    query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]},
+             '\\\\\0')}|#{charset.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{language}|#{headers[0..4].join('|')}} WITHSCORES"
+  else
+    query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]},
+            '\\\\\0')}|#{file_ending}|#{charset.gsub(%r{[/\\\-.]},
+            '\\\\\0')}|#{language}|#{headers[0..4].join('|')}} WITHSCORES"
+  end
 
   puts query
   print query

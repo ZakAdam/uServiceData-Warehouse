@@ -261,6 +261,7 @@ def create_query(file_ending, file_type, charset, language, headers)
   if headers.present?
     max_headers = 5
     headers.each_with_index do |header, index|
+      break if index > max_headers
       next if header.empty?
 
       puts header
@@ -268,14 +269,12 @@ def create_query(file_ending, file_type, charset, language, headers)
       with_string << "COUNT(CASE WHEN (n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}}) THEN 1 ELSE NULL END) AS count_#{index},"
       total_count << "count_#{index}"
       parameters["header_#{index}".to_sym] = header
-
-      break if index > max_headers
     end
   end
 
   query_string << with_string.chop
 
-  query_string << " RETURN n, file_type_count, file_ending_count, charset_count, language_count, count_0, count_1, count_2, count_3, count_4, count_5, count_6, #{total_count.join(' + ')} AS totalCount ORDER BY totalCount DESC;"
+  query_string << " RETURN n, #{total_count.join(', ')}, #{total_count.join(' + ')} AS totalCount ORDER BY totalCount DESC;"
 
   puts query_string
   puts parameters
