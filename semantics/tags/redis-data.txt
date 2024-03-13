@@ -2,11 +2,12 @@
 FT.CREATE supplierIndex STOPWORDS 0 ON HASH PREFIX 1 supplier: SCHEMA name TEXT tags TAG
 
 # Load suppliers
-HSET supplier:0 name GLS tags xls,binary,en,application/vnd.ms-excel,Číslo_balíka,PSČ,CodFee,SVFee,Vyzdvihnutie,ManualLabelFee,PU-Country,CreditCardFee
-HSET supplier:1 name Heureka tags xml,utf-8,en,text/xml,cena,product,product_name,url,products
-HSET supplier:2 name DPD tags csv,us-ascii,de,text/plain,TOUR,DEPOTNAME,SCAN_CODE,PARCELNO,DEPOT_CODE,EVENT_DATE_TIME,ROUTE,PCODE
-HSET supplier:3 name GEIS tags csv,utf-8,sk,text/plain,PSČ,PK,Adresa,Príjemca,Štát,Odosielateľ,Mesto,Dátum_odoslania,Počet_kusov,Číslo_zásielky
-HSET supplier:4 name DHL tags csv,utf-8,en,text/csv,Line_Type,Billing_Source,Original_Invoice_Number,Invoice_Identifier,Billing_Account_Name,Station_Code,Total_Tax,Currency,Invoice_Number,Receivers_Name,Billing_Account
+HSET supplier:0 name GLS tags "xls,binary,en,application/vnd.ms-excel,Číslo_balíka,PSČ,CodFee,SVFee,Vyzdvihnutie,ManualLabelFee,PU-Country,CreditCardFee"
+HSET supplier:1 name Heureka tags "xml,utf-8,en,text/xml,cena,product,product_name,url,products"
+HSET supplier:2 name DPD tags "csv,us-ascii,de,text/plain,TOUR,DEPOTNAME,SCAN_CODE,PARCELNO,DEPOT_CODE,EVENT_DATE_TIME,ROUTE,PCODE"
+HSET supplier:3 name GEIS tags "csv,utf-8,sk,text/plain,PSČ,PK,Adresa,Príjemca,Štát,Odosielateľ,Mesto,Dátum_odoslania,Počet_kusov,Číslo_zásielky"
+# HSET supplier:4 name DHL tags "csv,utf-8,en,text/csv,Line_Type,Billing_Source,Original_Invoice_Number,Invoice_Identifier,Billing_Account_Name,Station_Code,Total_Tax,Currency,Invoice_Number,Receivers_Name,Billing_Account
+HSET supplier:4 name DHL tags "csv,utf-8,en,text/csv,Line_Type,Billing_Source,Station_Code,Total_Tax,Currency,Invoice_Number,Receivers_Name"
 
 # Load endpoints
 SET keep_location optional-processors:4567/geo_location/keep_country
@@ -16,4 +17,4 @@ SET dhl processor:4567/dhl/process
 SET heureka processor:4567/heureka_reviews/process
 SET geis processor:4567/geis/process
 SET gls processor:4567/gls_invoice/process
-SET dpd localhost:4567/dpd_invoice/process
+SET dpd processor:4567/dpd_invoice/process
