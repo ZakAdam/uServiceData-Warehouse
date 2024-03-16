@@ -4,7 +4,6 @@ FROM ruby:3.2.2
 
 WORKDIR /code
 COPY . /code
-COPY ../docker-compose.yml docker-compose.yml
 RUN bundle update
 RUN bundle install
 

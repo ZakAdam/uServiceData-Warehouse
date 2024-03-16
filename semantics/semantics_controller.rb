@@ -5,6 +5,7 @@ require 'json'
 require 'nokogiri'
 load './graph_manager.rb'
 load 'tags/tags_manager.rb'
+load './docker_manager.rb'
 
 before do
   #content_type :json
@@ -66,12 +67,27 @@ post '/semantic/process' do
 
   puts "Selected URLs by Graph are: #{urls}"
 
+  started_containers = []
+  urls.each_with_index do |url, index|
+    puts url
+    puts url.split(':')
+    puts url.split(':')[0]
+    started_containers << start_container(url.split(':')[0], index)
+  end
+
+  puts 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL'
+
+  started_containers.each do |name|
+    stop_container(name)
+  end
+
+=begin
   RestClient.post urls[0].to_s,
                   file_type: result[1],
                   file: File.open(file),
                   urls: urls,
                   url_index: 1
-
+=end
 end
 
 post '/graph/process' do
