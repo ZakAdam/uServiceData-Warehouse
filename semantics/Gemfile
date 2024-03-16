@@ -28,3 +28,4 @@ gem 'sidekiq'
 gem 'sidekiq-cron'
 
 gem 'redis'
+gem 'docker-api'
