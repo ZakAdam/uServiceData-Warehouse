@@ -1,15 +1,13 @@
 echo 'Spustenie scriptu'
 date +"%T"
-	for i in {1..5}
+	for i in {1..1}
 do
 	echo "$i"
-	#curl -X POST -F 'file=@../../AdamZak/Faktury/gls Inv_981394898_Client_980003355.xls' localhost:4001/upload
-	#curl -X POST -F 'file=@../../AdamZak/Faktury/gls Inv_981396513_Client_980003355.xls' localhost:4001/upload
-	#curl -X POST -F 'file=@../files/test_files/Faktury/gls Inv_981406669_Client_980003355.xls' localhost:4001/upload
-	#curl -X POST -F 'file=@../../AdamZak/Faktury/gls Inv_981401555_Client_980003355.xls' localhost:4001/upload
+	#curl -X POST -F 'file=@../files/test_files/DPD/STATUSDATA_BA0274_D20210212T171809' localhost:4001/upload
+	curl -X POST -F 'file=@../files/test_files/DHL/BTSR000151427.csv' localhost:4001/upload
 
 	# curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location,send_email' localhost:4001/upload
-	curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' localhost:4001/upload
+	#curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' localhost:4001/upload
 done
 echo 'Konec scriptu'
 date +"%T"

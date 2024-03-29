@@ -141,7 +141,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "DHL endpoint" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "optional-processors:4567/dhl/process" ;
+    warehouse:url  "processor:4567/csv/process" ;
     warehouse:condition "dhl" ;
     warehouse:method    "POST"  .
 
@@ -149,7 +149,7 @@
     a              warehouse:Endpoint ;
     rdfs:label     "GEIS endpoint" ;
     #warehouse:url  "optional_processor:4444/notifications/send_email" ;
-    warehouse:url  "optional-processors:4567/geis/process" ;
+    warehouse:url  "processor:4567/csv/process" ;
     warehouse:condition "geis" ;
     warehouse:method    "POST"  .
 
