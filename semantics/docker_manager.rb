@@ -50,6 +50,7 @@ def stop_container(name)
   puts "Stopping container: #{name}"
   container = Docker::Container.get(name)
   container.stop
+  container.delete(force: true)
 
   name
 end

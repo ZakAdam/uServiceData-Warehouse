@@ -70,18 +70,22 @@ post '/semantic/process' do
   started_containers = []
   new_urls = []
 
-  urls.each_with_index do |url, index|
-    puts url
-    puts url.split(':')
-    puts url.split(':')[0]
-    started_containers << start_container(url.split(':')[0], index)
 
-    split_url = url.split(':')
-    new_urls << split_url[0] + "-#{index}:" + split_url[1]
+  if ENV['SEMANTIC_DEPLOY'] == 'true'
+    urls.each_with_index do |url, index|
+      puts url
+      puts url.split(':')
+      puts url.split(':')[0]
+      started_containers << start_container(url.split(':')[0], index)
+
+      split_url = url.split(':')
+      new_urls << split_url[0] + "-#{index}:" + split_url[1]
+    end
+
+    puts 'End of containers deployment...'
+  else
+    new_urls = urls
   end
-
-  sleep(3)
-  puts 'End of containers deployment...'
 
   RestClient.post new_urls[0].to_s,
                   file_type: result[1],
@@ -90,8 +94,10 @@ post '/semantic/process' do
                   url_index: 1
 
 
-  started_containers.each do |name|
-    stop_container(name)
+  if ENV['SEMANTIC_DEPLOY'] == 'true'
+    started_containers.each do |name|
+      stop_container(name)
+    end
   end
 end
 
