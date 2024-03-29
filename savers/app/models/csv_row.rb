@@ -1,3 +1,0 @@
-class CsvRow < ApplicationRecord
-
-end
