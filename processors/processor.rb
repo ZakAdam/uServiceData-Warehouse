@@ -48,7 +48,7 @@ post '/gls_invoice/process' do
     }
   end
 
-  RestClient.post "saver:3000/transport_invoices/save", file_type: params[:file_type], file: transform, docker_id: @docker_id, jid:
+  RestClient.post 'saver:3000/transport_invoices/save', file_type: params[:file_type], file: transform, docker_id: @docker_id, jid:
 end
 
 post '/heureka_reviews/process' do
@@ -59,19 +59,24 @@ post '/heureka_reviews/process' do
                      parser.parse(params['reviews'])
                    end
 
-  RestClient.post "saver:3000/heureka_reviews/save", reviews: parsed_reviews, docker_id: @docker_id
+  RestClient.post 'saver:3000/heureka_reviews/save', reviews: parsed_reviews, docker_id: @docker_id
 end
 
 post '/dpd_invoice/process' do
   data = SmarterCSV.process(params['file'][:tempfile].path, { col_sep: ';' })
 
-  RestClient.post "saver:3000/package_tracking/save", trackings: data, docker_id: @docker_id
+  RestClient.post 'saver:3000/package_tracking/save', trackings: data, docker_id: @docker_id
 end
 
 post '/csv/process' do
-  data = SmarterCSV.process(params['file'][:tempfile].path, { col_sep: ',' })
+  begin
+    data = SmarterCSV.process(params['file'][:tempfile].path)
+  rescue SmarterCSVException
+    puts 'Unable to process received file.'
+    return 400
+  end
 
-  RestClient.post "saver:3000/store_rows/save", data:, docker_id: @docker_id
+  RestClient.post 'saver:3000/store_rows/save', data:, docker_id: @docker_id
 end
 
 post '/package_tracking/process' do
@@ -94,7 +99,7 @@ post '/package_tracking/process' do
     last_id = last_id + 1
   end
 
-  RestClient.post "saver:3000/package_simple/save", new_trackings:, new_trackings_details:, new_consignee:, docker_id: @docker_id
+  RestClient.post 'saver:3000/package_simple/save', new_trackings:, new_trackings_details:, new_consignee:, docker_id: @docker_id
 end
 
 post '/single_reviews/process' do

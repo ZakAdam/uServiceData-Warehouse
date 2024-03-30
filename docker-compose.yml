@@ -153,6 +153,5 @@ services:
 
   redis-insight:
     image: 'redis/redisinsight:latest'
-    restart: always
     ports:
       - "5540:5540"
