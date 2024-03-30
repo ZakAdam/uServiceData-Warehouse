@@ -86,7 +86,7 @@ post '/semantic/process' do
     end
 
     puts 'End of containers deployment...'
-    sleep(2)
+    sleep(1)
   else
     new_urls = urls
   end

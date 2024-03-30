@@ -92,7 +92,7 @@ services:
       - "5000-5005:4567"
 
   neo4j:
-    container_name: neo4j-compose
+    #container_name: neo4j-compose
     ports:
       - '7687:7687'
       - '7474:7474'
@@ -128,7 +128,7 @@ services:
       - ./docker-compose.yml:/code/docker-compose.yml
 
   redis-stack-server:
-    container_name: redis-stack-server
+    #container_name: redis-stack-server
     ports:
       - '6379:6379'
     image: 'redis/redis-stack-server:latest'
