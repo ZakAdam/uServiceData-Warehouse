@@ -30,9 +30,12 @@ puts NAMES_AND_PORTS
 
 def start_container(name, index)
   puts "Starting container: #{name}"
-  puts NAMES_AND_IMAGES
   image = NAMES_AND_IMAGES[name]
   ports = NAMES_AND_PORTS[name].first.split(':')
+
+  # stop container if already running
+  stop_container("#{name}-#{index}")
+
   container = Docker::Container.create('Image' => image,
                                        'name' => "#{name}-#{index}",
                                        'HostConfig' => {
@@ -41,16 +44,23 @@ def start_container(name, index)
                                            "#{ports[1]}/tcp" => [{ 'HostPort' => ports[0] }]
                                          }
                                        })
-  container.start
+
+  container.start!
+
+  #port = container.json['NetworkSettings']['Ports'].values.first.first['HostPort']
 
   "#{name}-#{index}"
 end
 
 def stop_container(name)
   puts "Stopping container: #{name}"
-  container = Docker::Container.get(name)
-  container.stop
-  container.delete(force: true)
+  begin
+    container = Docker::Container.get(name)
+    container.stop
+    container.delete(force: true)
+  rescue Docker::Error::NotFoundError
+    puts 'Not found'
+  end
 
   name
 end

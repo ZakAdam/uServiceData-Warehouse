@@ -76,22 +76,30 @@ post '/semantic/process' do
       puts url
       puts url.split(':')
       puts url.split(':')[0]
+      #container_url = start_container(url.split(':')[0], index)
       started_containers << start_container(url.split(':')[0], index)
+      #started_containers << container_url.to_s
 
       split_url = url.split(':')
       new_urls << split_url[0] + "-#{index}:" + split_url[1]
+      #new_urls << "#{container_url}/#{url.split('/')[1..].join('/')}"
     end
 
     puts 'End of containers deployment...'
+    sleep(2)
   else
     new_urls = urls
   end
+
+  puts 'Odkazy loloploloolol'
+  puts new_urls
 
   RestClient.post new_urls[0].to_s,
                   file_type: result[1],
                   file: File.open(file),
                   urls: new_urls,
-                  url_index: 1
+                  url_index: 1,
+                  timeout: 1200
 
 
   if ENV['SEMANTIC_DEPLOY'] == 'true'

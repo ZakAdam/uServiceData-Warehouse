@@ -17,7 +17,7 @@ services:
   processor:
     build: processors/.
     deploy:
-      replicas: 1
+      replicas: 0
     environment:
       - REDIS_HOST=172.17.0.1
       - REDIS_PORT=6379
@@ -84,7 +84,7 @@ services:
   optional-processors:
     build: processors/optional_processors/.
     deploy:
-      replicas: 1
+      replicas: 0
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
@@ -123,7 +123,7 @@ services:
       - REDIS_PORT=6379
       - ONTOLOGY=true
       - TAGGING=false
-      - SEMANTIC_DEPLOY=false
+      - SEMANTIC_DEPLOY=true
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml
 

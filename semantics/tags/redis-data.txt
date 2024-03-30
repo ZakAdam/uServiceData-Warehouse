@@ -13,8 +13,8 @@ HSET supplier:4 name DHL tags "csv,utf-8,en,text/csv,Line_Type,Billing_Source,St
 SET keep_location optional-processors:4567/geo_location/keep_country
 SET send_email optional-processors:4567/notifications/send_email
 SET schedule_cron optional-processors:4567/cron/schedule
-SET dhl processor:4567/dhl/process
+SET dhl processor:4567/csv/process
 SET heureka processor:4567/heureka_reviews/process
-SET geis processor:4567/geis/process
+SET geis processor:4567/csv/process
 SET gls processor:4567/gls_invoice/process
 SET dpd processor:4567/dpd_invoice/process
