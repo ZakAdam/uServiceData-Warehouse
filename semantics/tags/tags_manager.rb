@@ -44,9 +44,9 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
   end
 
   # TODO: delete these after testing!!!
-  language = 'pl'
-  charset = 'sturovcina'
-  file_type = 'nist'
+  # language = 'pl'
+  # charset = 'sturovcina'
+  # file_type = 'nist'
 
   ####################
 
@@ -75,9 +75,11 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
   puts results
 
   # puts "Tags identified supplier: #{results[2][1]}"
-  puts "Tags identified supplier: #{results[3][1]}"
+  # puts "Tags identified supplier: #{results[3][1]}"
+  puts "Tags identified supplier: #{results[3][3]}"
   # results[2][1].downcase
-  results[3][1].downcase
+  # results[3][1].downcase
+  results[3][3].downcase
 end
 
 def get_path_by_tags(supplier, conditions)

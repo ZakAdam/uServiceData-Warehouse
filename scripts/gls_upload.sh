@@ -1,6 +1,6 @@
 echo 'Spustenie scriptu'
 date +"%T.%3N"
-	for i in {1..5}
+	for i in {1..1}
 do
 	echo "$i"
 	#curl -X POST -F 'file=@../files/test_files/DPD/STATUSDATA_BA0274_D20210212T171809' localhost:4001/upload	#DPD
