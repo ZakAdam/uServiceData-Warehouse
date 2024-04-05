@@ -121,8 +121,8 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=false
-      - TAGGING=true
+      - ONTOLOGY=true
+      - TAGGING=false
       - SEMANTIC_DEPLOY=false
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml
@@ -131,7 +131,18 @@ services:
     #container_name: redis-stack-server
     ports:
       - '6379:6379'
+      - '6380:6380'
+    #environment:
+    #  - REDISEARCH_ARGS="EXTLOAD /scoring_method.so"
+    #entrypoint: chmod 777 /entrypoint-edited.sh && ./entrypoint-edited.sh
+    #entrypoint: echo "lolooooll"
     image: 'redis/redis-stack-server:latest'
+    #build:
+    #  context: ./semantics/tags
+    #  dockerfile: Dockerfile-redis
+    volumes:
+      - ./semantics/tags/redis-scoring/hits_scorer.so:/hits_scorer.so
+      #- ./sem  antics/tags/redis-stack.conf:/redis-stack.conf
 
   python-nn:
     build: semantics/nn/.

@@ -74,12 +74,7 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
 
   puts results
 
-  # puts "Tags identified supplier: #{results[2][1]}"
-  # puts "Tags identified supplier: #{results[3][1]}"
-  puts "Tags identified supplier: #{results[3][3]}"
-  # results[2][1].downcase
-  # results[3][1].downcase
-  results[3][3].downcase
+  get_supplier_name(results[3])
 end
 
 def get_path_by_tags(supplier, conditions)
@@ -90,4 +85,17 @@ def get_path_by_tags(supplier, conditions)
   path = REDIS.call(query.split).compact
   puts "Path created by tags: #{path}"
   path.to_s
+end
+
+def get_supplier_name(array)
+  new_hash = {}
+  puts array
+
+  array.each_slice(2) do |key, value|
+    new_hash[key.to_sym] = value
+  end
+
+  puts new_hash
+  puts "Tags identified supplier: #{new_hash[:name]}"
+  new_hash[:name].downcase
 end
