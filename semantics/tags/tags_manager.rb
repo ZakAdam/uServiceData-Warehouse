@@ -3,10 +3,7 @@ require 'sinatra'
 require 'dotenv'
 require 'json'
 
-#REDIS = Redis.new
-#REDIS = Redis.new(url: ENV['REDIS_SIDEKIQ_URL'])
 REDIS = Redis.new(host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'])
-
 
 get '/' do
   'Hello world!'
@@ -15,7 +12,6 @@ end
 post '/tags/process' do
   data = JSON.parse(params[:data])
 
-  # supplier = get_supplier_by_tags(data[:file_ending], data[:mime_type], data[:charset], data[:language], data[:headers])
   supplier = get_supplier_by_tags(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers'])
   conditions = data['conditions'].to_a.empty? ? '' : data['conditions'].first.split(',')
   path = get_path_by_tags(supplier, conditions)
@@ -51,24 +47,18 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
   ####################
 
   headers = headers.map { |s| s.gsub(' ', '_') }
-  #query = "FT.SEARCH supplierIndex @tags:{binary|en}"
-
-  # query = "FT.SEARCH supplierIndex @tags:{#{file_ending}|#{file_type.gsub('-', '\-')}|#{charset.gsub('-', '\-')}|#{language}|#{headers[0..4].join('|')}} RETURN 1 name WITHSCORES"
-  # query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]}, 
-  #                                                         '\\\\\0')}}@tags:{#{file_ending}}@tags:{#{charset.gsub(%r{[/\\\-.]},
-  #                                                         '\\\\\0')}}@tags:{#{language}}@tags:{#{headers[0..6].join('|')}} RETURN 1 name"
 
   if file_ending.empty?
-    query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]},
-             '\\\\\0')}|#{charset.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{language}|#{headers[0..4].join('|')}} WITHSCORES"
+    query_data = "#{file_type.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{charset.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{language}|#{headers[0..6].join('|')}"
+    query_data_raw = "#{file_type}|#{charset}|#{language}|#{headers[0..6].join('|')}".downcase
   else
-    query = "FT.SEARCH supplierIndex @tags:{#{file_type.gsub(%r{[/\\\-.]},
-            '\\\\\0')}|#{file_ending}|#{charset.gsub(%r{[/\\\-.]},
-            '\\\\\0')}|#{language}|#{headers[0..4].join('|')}} WITHSCORES"
+    query_data = "#{file_type.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{file_ending}|#{charset.gsub(%r{[/\\\-.]}, '\\\\\0')}|#{language}|#{headers[0..6].join('|')}"
+    query_data_raw = "#{file_type}|#{file_ending}|#{charset}|#{language}|#{headers[0..6].join('|')}".downcase
   end
 
+  query = "FT.SEARCH supplierIndex @tags:{#{query_data}} PAYLOAD #{query_data_raw} WITHSCORES SCORER HITS_SCORER"
+
   puts query
-  print query
 
   results = REDIS.call(query.split)
 
@@ -96,6 +86,6 @@ def get_supplier_name(array)
   end
 
   puts new_hash
-  puts "Tags identified supplier: #{new_hash[:name]}"
+  puts "Tags identified supplier: #{new_hash[:name].downcase}"
   new_hash[:name].downcase
 end

@@ -121,8 +121,8 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=true
-      - TAGGING=false
+      - ONTOLOGY=false
+      - TAGGING=true
       - SEMANTIC_DEPLOY=false
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml
@@ -160,7 +160,8 @@ services:
       - "4444:4444"
     environment:
       - REDIS_HOST=redis-stack-server
-      - REDIS_PORT=6379
+      #- REDIS_PORT=6379
+      - REDIS_PORT=6380
 
   redis-insight:
     image: 'redis/redisinsight:latest'
