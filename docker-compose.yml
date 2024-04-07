@@ -121,8 +121,8 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=false
-      - TAGGING=true
+      - ONTOLOGY=true
+      - TAGGING=false
       - SEMANTIC_DEPLOY=false
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml

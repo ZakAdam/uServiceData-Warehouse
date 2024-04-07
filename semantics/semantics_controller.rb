@@ -23,7 +23,7 @@ post '/semantic/process' do
   # This calls will be later split on standalone containers
   # 1. get file type
   file = params['file'][:tempfile]
-  conditions = params['conditions'].split(', ')
+  conditions = params['conditions'].split(',')
 
   result = file_endings(file.path)
   headers = get_headers(file)
