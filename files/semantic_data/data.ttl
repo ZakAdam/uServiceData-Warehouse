@@ -20,7 +20,7 @@
     warehouse:HAS_fileType <http://warehouse.org/type/3> ;
     warehouse:HAS_charSet  <http://warehouse.org/charset/3> ;
     warehouse:HAS_language <http://warehouse.org/language/2> ;
-    warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
+    # warehouse:HAS_endpoint <http://warehouse.org/endpoint/1> ;
     warehouse:HAS_endpoint <http://warehouse.org/endpoint/4> ;
     warehouse:fileElements <http://warehouse.org/column/16> ;
     warehouse:fileElements <http://warehouse.org/column/9> ;

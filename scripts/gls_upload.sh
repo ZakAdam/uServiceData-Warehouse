@@ -9,8 +9,8 @@ do
 	#curl -X POST -F 'file=@../files/test_files/Heureka/product-review-muziker-sk.xml' localhost:4001/upload		#Heureka
 	#curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' localhost:4001/upload	#GLS
 
-  #curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location'localhost:4001/upload
-  #curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location,send_email'localhost:4001/upload
+  #curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location' localhost:4001/upload
+  #curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location,send_email' localhost:4001/upload
 	curl -X POST -F 'file=@../files/test_files/GLS/gls Inv_981406669_Client_980003355.xls' -F 'conditions=keep_location,send_email,schedule_cron' localhost:4001/upload
 
 done

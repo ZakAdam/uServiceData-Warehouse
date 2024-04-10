@@ -71,7 +71,8 @@ def get_path_conditions(paths, request_conditions)
     condition_percentage = (hits.to_f / request_conditions.size) * 100
 
     # Find the worse score get that. This removes bias to shorter paths, or longer paths.
-    hits_percentage = path_percentage > condition_percentage ? condition_percentage : path_percentage
+    # hits_percentage = path_percentage > condition_percentage ? condition_percentage : path_percentage
+    hits_percentage = (path_percentage + condition_percentage) / 2
 
     if hits_percentage > max_hits_percentage
       max_hits_percentage = hits_percentage
@@ -84,6 +85,7 @@ def get_path_conditions(paths, request_conditions)
       best_index = index
     end
 
+    puts "Path conditions: #{path_percentage} | Request conditions: #{condition_percentage}"
     puts "Percentage of hits for #{hits_percentage}% path: #{index} -> number of hits #{max_hits}"
     puts '-------------------------------------------------------------------'
   end
