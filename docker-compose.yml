@@ -121,38 +121,21 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=true
-      - TAGGING=false
+      - ONTOLOGY=false
+      - TAGGING=true
       - SEMANTIC_DEPLOY=false
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml
 
   redis-stack-server:
-    #container_name: redis-stack-server
     ports:
       - '6379:6379'
-      - '6380:6380'
-    #environment:
-    #  - REDISEARCH_ARGS="EXTLOAD /scoring_method.so"
-    #entrypoint: chmod 777 /entrypoint-edited.sh && ./entrypoint-edited.sh
-    #entrypoint: echo "lolooooll"
-    image: 'redis/redis-stack-server:latest'
-    #build:
-    #  context: ./semantics/tags
-    #  dockerfile: Dockerfile-redis
+      - '8001:8001'
     volumes:
       - ./semantics/tags/redis-scoring/hits_scorer.so:/hits_scorer.so
-      #- ./sem  antics/tags/redis-stack.conf:/redis-stack.conf
-
-  python-nn:
-    build: semantics/nn/.
-    ports:
-      - "4445:5000"
     environment:
-      - PSID=cwhfpDNR5QJjewya1OgvOWUOd3sd_fxCE3na3bquQdd1v5Qs2eMRi7kEHBUxKV8idJwYWQ.
-      - PSIDTS=sidts-CjEBNiGH7qXcXZZDCRWTO0ecQ6SU822paZU_RbIhP-N8FjLVMmsofoNhEX1L8_jf9dMmEAA
-      - PSIDCC=ACA-OxO_qQNP7x0KA9cuchmABJEJ_sPI25_OEJEF-l1IoRCVQb3mVYHOcz8iLzdr95KzXm6aCTc
-      - PAPISID=xs67jk3H3vTxG1-8/A1s_Hl4rP3RByg2ER
+      - REDISEARCH_ARGS=EXTLOAD /hits_scorer.so
+    image: 'redis/redis-stack:latest'
 
   tags:
     build: semantics/tags/.
@@ -160,10 +143,4 @@ services:
       - "4444:4444"
     environment:
       - REDIS_HOST=redis-stack-server
-      #- REDIS_PORT=6379
-      - REDIS_PORT=6380
-
-  redis-insight:
-    image: 'redis/redisinsight:latest'
-    ports:
-      - "5540:5540"
+      - REDIS_PORT=6379

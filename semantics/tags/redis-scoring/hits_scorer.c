@@ -19,17 +19,18 @@ double HitsScorer(const ScoringFunctionArgs *ctx, const RSIndexResult *r, const 
     const char *term = r->agg.children[i]->term.term->str;
 
     // Debug print used for displaying terms
-    //printf("Term %d: %s\n", i, term);
+    // printf("Term %d: %s\n", i, term);
 
     // Check if the term exists in the query string
     if (strstr(queryString, term) != NULL) {
-      // Increment match count if the term is found in the query
+	  // Increment match count if the term is found in the query
       matchCount++;
     }
   }
 
   // Return the match count as the score
-  return (double)matchCount;
+  //return (double)matchCount;
+  return matchCount;
 }
 
 int RS_ExtensionInit(RSExtensionCtx *ctx) {
