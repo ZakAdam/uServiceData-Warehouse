@@ -7,4 +7,6 @@ class Type
   property :rdfs__label
   property :uri
   property :ns0__fileEnding
+
+  has_many :in, :suppliers, type: :ns0__HAS_fileType
 end

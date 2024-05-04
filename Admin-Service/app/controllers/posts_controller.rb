@@ -1,4 +1,7 @@
 require 'rest-client'
+require 'dotenv'
+
+Dotenv.load
 
 class PostsController < ApplicationController
   skip_before_action :verify_authenticity_token
@@ -9,7 +12,7 @@ class PostsController < ApplicationController
   def create
     uploader = FileUploader.new
     if uploader.store!(params[:file])
-      NewInvoiceUpload.perform_async(params[:file].original_filename)
+      NewInvoiceUpload.perform_async(params[:file].original_filename, params[:conditions])
 
       redirect_to root_path, notice: 'File successfully uploaded!'
     end
@@ -17,11 +20,15 @@ class PostsController < ApplicationController
 
   def get_file
     file_name = params[:name].tr(' ', '_')
-    file_type = params[:file_type]
+    conditions = params[:conditions]
     jid = params[:jid]
 
     file = File.open("./public/files/#{file_name}")
-    RestClient.post '172.17.0.1:4321/semantic/process', file_type: file_type, file: file, jid: jid
-    #RestClient.post 'processor:4567/gls_invoice/process', file_type: file_type, file: file, jid: jid
+
+    if ENV['SEMANTIC-PROCESSING'] == 'true'
+      RestClient.post 'semantics:4321/semantic/process', conditions:, file: file, jid: jid
+    else
+      RestClient.post 'processor:4567/gls_invoice/process', conditions:, file: file, jid: jid
+    end
   end
 end

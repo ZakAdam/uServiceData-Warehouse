@@ -1,9 +1,9 @@
 # File for parsing content of xml files.
 # Parsed data are used to determine data origin using given headers/keys and ontology.
 require 'nokogiri'
-require 'rdf'
-require 'linkeddata'
-require 'rdf/ntriples'
+#require 'rdf'
+#require 'linkeddata'
+#require 'rdf/ntriples'
 
 
 def load_keys
@@ -11,9 +11,10 @@ def load_keys
   doc.search('*').map(&:name).uniq
 end
 
-FILE = '/home/adam/Desktop/FIIT/DP/files/Heureka/mensie.xml'
+FILE = '/home/adam/Desktop/FIIT/uServiceData-Warehouse/files/test_files/Heureka/product-review-muziker-sk.xml'
 puts load_keys
 
+=begin
 # https://github.com/ruby-rdf/rdf
 RDF::Reader.open("https://ruby-rdf.github.io/rdf/etc/doap.nt") do |reader|
   reader.each_statement do |statement|
@@ -34,4 +35,4 @@ query = RDF::Query.new({
 query.execute(graph) do |solution|
   puts "name=#{solution.name} email=#{solution.email}"
 end
-
+=end

@@ -9,4 +9,6 @@ Rails.application.routes.draw do
   post 'package_simple/new_depot', to: 'package_simple#create_depot'
   get 'package_simple/depots', to: 'package_simple#get_depots'
   get 'package_simple/last_id', to: 'package_simple#get_last_id'
+
+  post 'store_rows/save', to: 'row_save#process_data'
 end

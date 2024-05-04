@@ -1,0 +1,20 @@
+//Config
+call n10s.graphconfig.init( {   handleMultival: "ARRAY",
+                                multivalPropList: [],
+                                handleVocabUris: "SHORTEN"  })
+
+//Constraint
+CREATE CONSTRAINT n10s_unique_uri FOR (r:Resource) REQUIRE r.uri IS UNIQUE
+
+//Create
+MATCH (n:ns0__Endpoint {rdfs__label: 'Send Email Report'})
+CREATE (:ns0__Endpoint {rdfs__label: 'Dead endpoint'})<-[:ns0__HAS_endpoint]-(n)
+
+//Delete
+MATCH (resource:Resource) DETACH DELETE resource;
+
+//Import
+CALL n10s.rdf.import.fetch(
+  'https://raw.githubusercontent.com/ZakAdam/uServiceData-Warehouse/add-semantics-service-DP1/files/semantic_data/data.ttl',
+  'Turtle'
+)

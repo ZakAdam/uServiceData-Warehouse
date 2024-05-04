@@ -10,21 +10,25 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server #172.17.0.1               # redis-stack-server
+      - REDIS_PORT=6379
+      - SEMANTIC-PROCESSING=true
 
   processor:
     build: processors/.
+    deploy:
+      replicas: 1
     environment:
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
     ports:
       - "4560-4570:4567"
-    links:
-      - "saver:saver"
 
   saver:
     build: savers/.
     ports:
-        - "3950-4000:3000"
+        #- "3950-4000:3000"
+      - "4000:3000"
     privileged: true
     environment:
       - POSTGRES_HOST=172.17.0.1
@@ -32,15 +36,17 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
 
   sidekiq-heureka:
     build: downloaders/.
     environment:
       - SINGLE=true
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
       - START-JOB=false
-      - SCHEDULE-JOB=true
+      - SCHEDULE-JOB=false
       - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
     command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
 
@@ -52,7 +58,8 @@ services:
       - SFTP_HOST=172.17.0.1
       - SFTP_USER=sftp_user
       - SFTP_PASSWORD=postgres
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
       - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
@@ -62,18 +69,30 @@ services:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
     environment:
-      - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+      - REDIS_HOST=172.17.0.1       # redis-stack-server
+      - REDIS_PORT=6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
       build: workers/
       environment:
-        - REDIS_SIDEKIQ_URL=redis://172.17.0.1:6379
+        - REDIS_HOST=172.17.0.1
+        - REDIS_PORT=6379
       privileged: true
-      command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
+      #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
+
+  optional-processors:
+    build: processors/optional_processors/.
+    deploy:
+      replicas: 1
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+    ports:
+      - "5000-5005:4567"
 
   neo4j:
-    container_name: neo4j-compose
+    #container_name: neo4j-compose
     ports:
       - '7687:7687'
       - '7474:7474'
@@ -83,10 +102,45 @@ services:
       - '$HOME/Data/neo4j/import:/var/lib/neo4j/import'
       - '$HOME/Data/neo4j/plugins:/plugins'
     environment:
-      - 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
+      - 'NEO4J_PLUGINS=["apoc", "n10s"]'
       - NEO4J_AUTH=none
-    image: 'neo4j:latest'
-      
-# GraphDB      
-# docker run -p 127.0.0.1:7200:7200 --name graphdb-instance-name -t ontotext/graphdb:10.0.0
+      #- 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
+    image: 'neo4j:5.5.0'
 
+  apach-tika:
+    image: 'apache/tika:latest-full'
+    ports:
+        - '9998:9998'
+
+  semantics:
+    build: semantics/.
+    ports:
+      - "4321:4321"
+    #deploy:
+    #  replicas: 2
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+      - ONTOLOGY=false
+      - TAGGING=true
+      - SEMANTIC_DEPLOY=false
+    volumes:
+      - ./docker-compose.yml:/code/docker-compose.yml
+
+  redis-stack-server:
+    ports:
+      - '6379:6379'
+      - '8001:8001'
+    volumes:
+      - ./semantics/tags/redis-scoring/hits_scorer.so:/hits_scorer.so
+    environment:
+      - REDISEARCH_ARGS=EXTLOAD /hits_scorer.so
+    image: 'redis/redis-stack:latest'
+
+  tags:
+    build: semantics/tags/.
+    ports:
+      - "4444:4444"
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379

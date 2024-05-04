@@ -1,0 +1,147 @@
+version: '3.0'
+services:
+  admin_service:
+    build: Admin-Service/.
+    ports:
+      - "4001:3000"
+    environment:
+      - POSTGRES_HOST=172.17.0.1
+      - POSTGRES_DB=savers_development
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - REDIS_HOST=172.17.0.1               # redis-stack-server
+      - REDIS_PORT=6379
+      - SEMANTIC-PROCESSING=true
+
+  processor:
+    build: processors/.
+    environment:
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
+    ports:
+      - "4560-4570:4567"
+
+  saver:
+    build: savers/.
+    ports:
+        #- "3950-4000:3000"
+      - "4000:3000"
+    privileged: true
+    environment:
+      - POSTGRES_HOST=172.17.0.1
+      - POSTGRES_DB=savers_development
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+
+  sidekiq-heureka:
+    build: downloaders/.
+    environment:
+      - SINGLE=true
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
+      - START-JOB=false
+      - SCHEDULE-JOB=false
+      - CRON='*/5 * * * *'            # ak je scheduled job true, tak nastav CRON cas
+    command: bundle exec sidekiq -r ./heureka_reviews_downloader.rb
+
+  sidekiq-sftp:
+    build: downloaders/.
+    command: bundle exec sidekiq -r ./sftp_csv_downloader.rb -C ./sidekiq.yml
+    environment:
+      - FILES_PATH=DPD
+      - SFTP_HOST=172.17.0.1
+      - SFTP_USER=sftp_user
+      - SFTP_PASSWORD=postgres
+      - REDIS_HOST=172.17.0.1
+      - REDIS_PORT=6379
+      - START-JOB=false
+      - SCHEDULE-JOB=false
+      - CRON='0 0 * * *'            # ak je scheduled job true, tak nastav CRON cas
+
+  tracking_sidekiq:
+    build:
+        context: ./Admin-Service
+        dockerfile: Dockerfile-sidekiq
+    environment:
+      - REDIS_HOST=172.17.0.1       # redis-stack-server
+      - REDIS_PORT=6379
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+  single_reviews:
+      build: workers/
+      environment:
+        - REDIS_HOST=172.17.0.1
+        - REDIS_PORT=6379
+      privileged: true
+      #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
+
+  optional-processors:
+    build: processors/optional_processors/.
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+    ports:
+      - "5000:4567"
+
+  neo4j:
+    container_name: neo4j-compose
+    ports:
+      - '7687:7687'
+      - '7474:7474'
+    volumes:
+      - '$HOME/Data/neo4j/data:/data'
+      - '$HOME/Data/neo4j/logs:/logs'
+      - '$HOME/Data/neo4j/import:/var/lib/neo4j/import'
+      - '$HOME/Data/neo4j/plugins:/plugins'
+    environment:
+      - 'NEO4J_PLUGINS=["apoc", "n10s"]'
+      - NEO4J_AUTH=none
+      #- 'NEO4JLABS_PLUGINS=["apoc", "n10s"]'
+    image: 'neo4j:5.5.0'
+
+  apach-tika:
+    image: 'apache/tika:latest-full'
+    ports:
+        - '9998:9998'
+
+  semantics:
+    build: semantics/.
+    ports:
+      - "4321:4321"
+    #deploy:
+    #  replicas: 2
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+      - ONTOLOGY=true
+      - TAGGING=false
+    volumes:
+      - ./docker-compose.yml:/code/docker-compose.yml
+
+  redis-stack-server:
+    container_name: redis-stack-server
+    ports:
+      - '6379:6379'
+    image: 'redis/redis-stack-server:latest'
+
+  python-nn:
+    build: semantics/nn/.
+    ports:
+      - "4445:5000"
+    environment:
+      - PSID=cwhfpDNR5QJjewya1OgvOWUOd3sd_fxCE3na3bquQdd1v5Qs2eMRi7kEHBUxKV8idJwYWQ.
+      - PSIDTS=sidts-CjEBNiGH7qXcXZZDCRWTO0ecQ6SU822paZU_RbIhP-N8FjLVMmsofoNhEX1L8_jf9dMmEAA
+      - PSIDCC=ACA-OxO_qQNP7x0KA9cuchmABJEJ_sPI25_OEJEF-l1IoRCVQb3mVYHOcz8iLzdr95KzXm6aCTc
+      - PAPISID=xs67jk3H3vTxG1-8/A1s_Hl4rP3RByg2ER
+
+  tags:
+    build: semantics/tags/.
+    ports:
+      - "4444:4444"
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379

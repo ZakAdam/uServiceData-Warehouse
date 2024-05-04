@@ -7,4 +7,6 @@ class Charset
   property :rdfs__label
   property :uri
   property :ns0__charSet
+
+  has_many :in, :suppliers, type: :ns0__HAS_charSet
 end
