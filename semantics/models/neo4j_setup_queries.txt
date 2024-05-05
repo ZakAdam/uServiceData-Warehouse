@@ -1,3 +1,5 @@
+// Three comands used for configuration setup and data loading.
+
 //Config
 call n10s.graphconfig.init( {   handleMultival: "ARRAY",
                                 multivalPropList: [],
@@ -6,15 +8,17 @@ call n10s.graphconfig.init( {   handleMultival: "ARRAY",
 //Constraint
 CREATE CONSTRAINT n10s_unique_uri FOR (r:Resource) REQUIRE r.uri IS UNIQUE
 
+//Import
+CALL n10s.rdf.import.fetch(
+  'https://raw.githubusercontent.com/ZakAdam/uServiceData-Warehouse/add-semantics-service-DP1/files/semantic_data/data.ttl',
+  'Turtle'
+)
+
+// Commands for the creating and deleitng of nodes. Used for testing and developemnt, do not run in the inicialiazation of DB. Only the three commands listed above! Used when editing the Ontology if you wish.
+
 //Create
 MATCH (n:ns0__Endpoint {rdfs__label: 'Send Email Report'})
 CREATE (:ns0__Endpoint {rdfs__label: 'Dead endpoint'})<-[:ns0__HAS_endpoint]-(n)
 
 //Delete
 MATCH (resource:Resource) DETACH DELETE resource;
-
-//Import
-CALL n10s.rdf.import.fetch(
-  'https://raw.githubusercontent.com/ZakAdam/uServiceData-Warehouse/add-semantics-service-DP1/files/semantic_data/data.ttl',
-  'Turtle'
-)
