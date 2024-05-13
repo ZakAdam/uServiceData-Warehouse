@@ -39,13 +39,6 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
     load_data
   end
 
-  # TODO: delete these after testing!!!
-  # language = 'pl'
-  # charset = 'sturovcina'
-  # file_type = 'nist'
-
-  ####################
-
   headers = headers.map { |s| s.gsub(' ', '_') }
 
   if file_ending.empty?
@@ -79,13 +72,11 @@ end
 
 def get_supplier_name(array)
   new_hash = {}
-  puts array
 
   array.each_slice(2) do |key, value|
     new_hash[key.to_sym] = value
   end
 
-  puts new_hash
   puts "Tags identified supplier: #{new_hash[:name].downcase}"
   new_hash[:name].downcase
 end

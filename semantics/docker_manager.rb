@@ -47,8 +47,6 @@ def start_container(name, index)
 
   container.start!
 
-  #port = container.json['NetworkSettings']['Ports'].values.first.first['HostPort']
-
   "#{name}-#{index}"
 end
 

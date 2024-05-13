@@ -69,15 +69,17 @@ services:
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-    command: bundle exec sidekiq -C config/sidekiq.yml
+    # commented to not start automatically
+    #command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
-      build: workers/
-      environment:
-        - REDIS_HOST=redis-stack-server
-        - REDIS_PORT=6379
-      privileged: true
-      #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
+    build: workers/
+    environment:
+      - REDIS_HOST=redis-stack-server
+      - REDIS_PORT=6379
+    privileged: true
+    # commented to not start automatically
+    #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
   redis-stack-server:
     container_name: redis-stack-server

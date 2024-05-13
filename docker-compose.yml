@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - REDIS_HOST=redis-stack-server #172.17.0.1               # redis-stack-server
+      - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
       - SEMANTIC-PROCESSING=true
 
@@ -19,7 +19,7 @@ services:
     deploy:
       replicas: 1
     environment:
-      - REDIS_HOST=172.17.0.1
+      - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
     ports:
       - "4560-4570:4567"
@@ -43,7 +43,7 @@ services:
     build: downloaders/.
     environment:
       - SINGLE=true
-      - REDIS_HOST=172.17.0.1
+      - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
@@ -58,7 +58,7 @@ services:
       - SFTP_HOST=172.17.0.1
       - SFTP_USER=sftp_user
       - SFTP_PASSWORD=postgres
-      - REDIS_HOST=172.17.0.1
+      - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
       - START-JOB=false
       - SCHEDULE-JOB=false
@@ -69,16 +69,17 @@ services:
         context: ./Admin-Service
         dockerfile: Dockerfile-sidekiq
     environment:
-      - REDIS_HOST=172.17.0.1       # redis-stack-server
+      - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   single_reviews:
       build: workers/
       environment:
-        - REDIS_HOST=172.17.0.1
+        - REDIS_HOST=redis-stack-server
         - REDIS_PORT=6379
       privileged: true
+      # commented to not start automatically
       #command: bundle exec sidekiq -r ./reviews_sidekiq.rb -C ./sidekiq.yml
 
   optional-processors:
@@ -92,7 +93,6 @@ services:
       - "5000-5005:4567"
 
   neo4j:
-    #container_name: neo4j-compose
     ports:
       - '7687:7687'
       - '7474:7474'
@@ -116,14 +116,12 @@ services:
     build: semantics/.
     ports:
       - "4321:4321"
-    #deploy:
-    #  replicas: 2
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
-      - ONTOLOGY=false
-      - TAGGING=true
-      - SEMANTIC_DEPLOY=false
+      - ONTOLOGY=true
+      - TAGGING=false
+      - SEMANTIC_DEPLOY=true
     volumes:
       - ./docker-compose.yml:/code/docker-compose.yml
 
