@@ -25,19 +25,12 @@ else
   puts "No 'services' found in the YAML docker-compose.yml file."
 end
 
-puts NAMES_AND_IMAGES
-puts NAMES_AND_PORTS
-
-def start_container(name, index)
+def start_container(name)
   puts "Starting container: #{name}"
   image = NAMES_AND_IMAGES[name]
   ports = NAMES_AND_PORTS[name].first.split(':')
 
-  # stop container if already running
-  stop_container("#{name}-#{index}")
-
   container = Docker::Container.create('Image' => image,
-                                       'name' => "#{name}-#{index}",
                                        'HostConfig' => {
                                          'NetworkMode' => 'uservicedata-warehouse_default',
                                          'PortBindings' => {
@@ -47,7 +40,9 @@ def start_container(name, index)
 
   container.start!
 
-  "#{name}-#{index}"
+  # return generated name
+  # this secures, that name is free and container can start
+  container.json['Name'][1..]
 end
 
 def stop_container(name)

@@ -71,11 +71,12 @@ post '/semantic/process' do
 
 
   if ENV['SEMANTIC_DEPLOY'] == 'true'
-    urls.each_with_index do |url, index|
-      started_containers << start_container(url.split(':')[0], index)
+    urls.each do |url|
+      name = start_container(url.split(':')[0])
+      started_containers << name
 
       split_url = url.split(':')
-      new_urls << split_url[0] + "-#{index}:" + split_url[1]
+      new_urls << "#{name}:" + split_url[1]
     end
 
     puts 'End of containers deployment...'
