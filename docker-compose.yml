@@ -1,4 +1,5 @@
-version: '3.0'
+name: uservicedata-warehouse
+
 services:
   admin_service:
     build: Admin-Service/.
@@ -117,6 +118,7 @@ services:
     ports:
       - "4321:4321"
     environment:
+      - COMPOSE_PROJECT_NAME
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
       - ONTOLOGY=false

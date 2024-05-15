@@ -4,18 +4,18 @@ require 'yaml'
 Docker.url = 'tcp://172.17.0.1:2375'
 
 # Load docker-compose file and create hash with names
-# Kuk ChatGPT
 compose_data = YAML.load(File.read('docker-compose.yml'))
 
 NAMES_AND_IMAGES = {}
 NAMES_AND_PORTS = {}
+PROJECT_NAME = ENV['COMPOSE_PROJECT_NAME']
 
 if compose_data && compose_data['services']
   compose_data['services'].each do |service_name, service_info|
     container_name = service_info['container_name'] || service_name
 
     image_name = service_info['image']
-    image_name = "uservicedata-warehouse_#{container_name}" if image_name.nil?
+    image_name = "#{PROJECT_NAME}_#{container_name}" if image_name.nil?
     NAMES_AND_IMAGES[container_name] = image_name
 
     port = service_info['ports']
@@ -32,7 +32,7 @@ def start_container(name)
 
   container = Docker::Container.create('Image' => image,
                                        'HostConfig' => {
-                                         'NetworkMode' => 'uservicedata-warehouse_default',
+                                         'NetworkMode' => "#{PROJECT_NAME}_default",
                                          'PortBindings' => {
                                            "#{ports[1]}/tcp" => [{ 'HostPort' => ports[0] }]
                                          }
