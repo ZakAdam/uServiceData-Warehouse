@@ -17,7 +17,7 @@ services:
   processor:
     build: processors/.
     deploy:
-      replicas: 0
+      replicas: 1
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
@@ -85,7 +85,7 @@ services:
   optional-processors:
     build: processors/optional_processors/.
     deploy:
-      replicas: 0
+      replicas: 1
     environment:
       - REDIS_HOST=redis-stack-server
       - REDIS_PORT=6379
