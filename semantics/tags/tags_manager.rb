@@ -13,8 +13,7 @@ post '/tags/process' do
   data = JSON.parse(params[:data])
 
   supplier = get_supplier_by_tags(data['file_ending'], data['mime_type'], data['charset'], data['language'], data['headers'])
-  conditions = data['conditions'].to_a.empty? ? '' : data['conditions'].first.split(',')
-  path = get_path_by_tags(supplier, conditions)
+  path = get_path_by_tags(supplier, data['conditions'])
 
   puts "Tags identified supplier as: #{supplier}"
   path
@@ -39,13 +38,6 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
     load_data
   end
 
-  # TODO: delete these after testing!!!
-  # language = 'pl'
-  # charset = 'sturovcina'
-  # file_type = 'nist'
-
-  ####################
-
   headers = headers.map { |s| s.gsub(' ', '_') }
 
   if file_ending.empty?
@@ -68,9 +60,7 @@ def get_supplier_by_tags(file_ending, file_type, charset, language, headers)
 end
 
 def get_path_by_tags(supplier, conditions)
-  conditions = conditions.join(' ') unless conditions.empty?
-
-  query = "MGET #{conditions} #{supplier}"
+  query = "MGET #{conditions.join(' ')} #{supplier}"
 
   path = REDIS.call(query.split).compact
   puts "Path created by tags: #{path}"
@@ -79,13 +69,11 @@ end
 
 def get_supplier_name(array)
   new_hash = {}
-  puts array
 
   array.each_slice(2) do |key, value|
     new_hash[key.to_sym] = value
   end
 
-  puts new_hash
   puts "Tags identified supplier: #{new_hash[:name].downcase}"
   new_hash[:name].downcase
 end

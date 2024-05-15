@@ -8,7 +8,6 @@ load 'tags/tags_manager.rb'
 load './docker_manager.rb'
 
 before do
-  #content_type :json
   @docker_id = `cat /etc/hostname`
 end
 
@@ -72,17 +71,12 @@ post '/semantic/process' do
 
 
   if ENV['SEMANTIC_DEPLOY'] == 'true'
-    urls.each_with_index do |url, index|
-      puts url
-      puts url.split(':')
-      puts url.split(':')[0]
-      #container_url = start_container(url.split(':')[0], index)
-      started_containers << start_container(url.split(':')[0], index)
-      #started_containers << container_url.to_s
+    urls.each do |url|
+      name = start_container(url.split(':')[0])
+      started_containers << name
 
       split_url = url.split(':')
-      new_urls << split_url[0] + "-#{index}:" + split_url[1]
-      #new_urls << "#{container_url}/#{url.split('/')[1..].join('/')}"
+      new_urls << "#{name}:" + split_url[1]
     end
 
     puts 'End of containers deployment...'
@@ -91,7 +85,6 @@ post '/semantic/process' do
     new_urls = urls
   end
 
-  puts 'Odkazy loloploloolol'
   puts new_urls
 
   RestClient.post new_urls[0].to_s,
@@ -135,10 +128,7 @@ end
 private
 
 def get_headers(file)
-  # testing file
-  # file = File.open('../files/test_files/Heureka/product-review-muziker-sk.xml')
   response = RestClient.post 'apach-tika:9998/rmeta/form/text', upload: file
-  # response = RestClient.post 'localhost:9998/rmeta/form/text', upload: file
   file_data = JSON.parse(response)[0]
 
   header_row = nil
@@ -161,14 +151,12 @@ def get_headers(file)
 end
 
 def get_language(headers)
-  # language = RestClient.put('localhost:9998/language/stream', headers:)
   language = RestClient.put('apach-tika:9998/language/stream', headers:)
 
   puts "Language for the file is: #{language.body}"
   language.body
 end
 
-# Later standalone service
 def file_endings(file)
   name_ending = File.extname(file).delete_prefix('.')
 
@@ -196,63 +184,6 @@ def get_by_four(file_ending, file_type, charset, language)
           .params(file_ending:, file_type:, charset:, language:)
           .pluck(:n)
 end
-
-=begin
-def create_query(file_ending, file_type, charset, language, headers)
-  # query = Supplier.as(:n).query
-  query = ActiveGraph::Core::Query.new
-
-  # Define your parameters as a hash
-  parameters = {}
-
-  # REMOVED bcs headings doesnt work otherwise :) ALSO file_ending shouldn't be required options, as it can be false
-  unless file_ending.nil? || file_ending.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__fileEnding: $file_ending})').break
-    parameters[:file_ending] = file_ending
-  end
-
-  # Add a MATCH clause for file_type if it is provided
-  unless file_type.nil? || file_type.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_fileType]->(:ns0__Type {ns0__mimeType: $file_type})').break
-    parameters[:file_type] = file_type
-  end
-
-  # Add a MATCH clause for charset if it is provided
-  unless charset.nil? || charset.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_charSet]->(:ns0__Charset {ns0__charSet: $charset})').break
-    parameters[:charset] = charset
-  end
-
-  # Add an OPTIONAL MATCH clause for language if it is provided
-  unless language.nil? || language.empty?
-    query = query.optional_match('(n)-[:ns0__HAS_language]->(:ns0__Language {ns0__code: $language})').break
-    parameters[:language] = language
-  end
-
-  unless headers.nil? || headers.empty?
-    max_headers = 5
-    headers.each_with_index do |header, index|
-      next if header.empty?
-
-      #query = query.optional_match('(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header})')
-      #parameters[:header] = header
-      query = query.optional_match("(n)-[:ns0__fileElements]->(:ns0__Column {rdfs__label: $header_#{index}})").break
-      parameters["header_#{index}".to_sym] = header
-      #parameters[:header_1] = 'Číslo balíka'
-
-      break if index > max_headers
-    end
-  end
-
-  # Set the parameters for the query
-  query = query.params(parameters)
-
-  print query.to_cypher
-
-  # Finally, pluck the result
-  query.pluck(:n)
-end
-=end
 
 def create_query(file_ending, file_type, charset, language, headers)
   # Create a new query object
@@ -311,12 +242,9 @@ def create_query(file_ending, file_type, charset, language, headers)
 
   query_string << " RETURN n, #{total_count.join(', ')}, #{total_count.join(' + ')} AS totalCount ORDER BY totalCount DESC;"
 
-  puts query_string
-  puts parameters
   query = ActiveGraph::Base.query(query_string, parameters)
   # query.parameters = parameters
 
-  puts query.to_a
   query.to_a.each do |supplier|
     puts supplier.inspect
     puts supplier[:n]

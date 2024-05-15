@@ -1,2 +1,0 @@
-Flask
-bardapi==0.1.29

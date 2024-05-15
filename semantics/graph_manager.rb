@@ -2,7 +2,6 @@ require 'active_graph'
 require 'neo4j-ruby-driver'
 Dir['./models/*.rb'].each { |file| require file }
 
-# ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://localhost:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 ActiveGraph::Base.driver = Neo4j::Driver::GraphDatabase.driver('bolt://neo4j:7687', Neo4j::Driver::AuthTokens.basic('neo4j','postgres'))
 
 # Define a lambda function for the recursive traversal
