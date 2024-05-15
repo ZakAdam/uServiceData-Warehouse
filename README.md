@@ -1,4 +1,11 @@
-## Repozitár k bakalárskemu projektu Adam Žák
+## Repozitár k diplomovému projektu Adam Žák
+
+Dátové sklady v súčasnosti tvoria dôležitú časť mnohých systémov, ktoré sa musia adaptovať na prácu s veľkým množstvom heterogénnych dát. Implementácia dátového skladu s architektúrou mikroslužieb prináša viacero výhod, napríklad lepšie využitie systémových zdrojov a škálovanie, ale takisto aj rad nevýhod. Medzi tie patria aj zložitejšie modelovanie biznis procesov, orchestrácia mikroslužieb a ich manažment. Spomenuté nevýhody je možné riešiť, napríklad pomocou implementovania sémantiky. Pomocou ontológie a sémantiky je systém schopný porozumieť s akými dátami pracuje a podľa toho sa adaptovať. 
+
+Analyzujte sémantiku v dátových skladoch a mikroslužbách. Porovnajte výhody a nevýhody rôznych implementácií sémantiky a jej využitia pre takéto systémy. Navrhnite prístup pre sémantické spracovanie dát prichádzajúcich do existujúceho dátového skladu postaveného na báze mikroslužieb. Na základe tohto prístupu bude systém automaticky vytvárať dynamické sémantické toky dát na ich ďalšie spracovanie. Vyhodnoťte dopad pridania tejto vrstvy na systém: vplyv na výkon a využitie prostriedkov systému.
+
+## Zadanie k bakalárskemu projektu Adam Žák
+# tento repozitár bol pôvodne určený pre bakalársky projekt
 
 Modulárny e-commerce dátový sklad  využívajúci mikroslužby
 
